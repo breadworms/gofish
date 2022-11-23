@@ -34,13 +34,16 @@ class Ocean {
 }
 
 function makeGear(inventory, gear) {
-  const index = inventory.findIndex(gear);
+  const index = inventory.indexOf(gear);
 
   if (index === -1) {
     return [false, () => false];
   }
 
-  return [true, weight => Math.random() * 100 < weight / 2 && inventory.splice(index, 1)];
+  return [
+    true,
+    weight => Math.random() * 100 < weight / 2 && inventory.splice(inventory.indexOf(gear), 1)
+  ];
 }
 
 function updateRecord(history, fish, weight) {
@@ -70,12 +73,12 @@ function updateRecord(history, fish, weight) {
 }
 
 function main(inputArgs) {
-  const now = new Date();
-  const player = JSON.parse(customData.get('gofishgame') ?? { inventory: [], history: [], canFishDate: now });
+  const now = Date.now();
+  const player = Object.assign({ inventory: [], history: [], canFishDate: now }, JSON.parse(customData.get('gofishgame') ?? null));
   const canFish = new Date(player.canFishDate) - now;
 
   if (canFish > 0) {
-    return `Ready to fish in ${canFish < 60000 ? Math.ceil(canFish / 1000) + 's' : Math.ceil(canFish / 1000 / 60) + 'm'}.`;
+    return `Ready to fish in ${canFish < 60000 ? Math.ceil(canFish / 1000) + 's' : Math.ceil(canFish / 1000 / 60) + 'm'}`;
   }
 
   const [hasLure, useLure] = makeGear(player.inventory, '🎏');
@@ -87,7 +90,9 @@ function main(inputArgs) {
   if (fish === false) {
     player.canFishDate = now + 30000;
 
-    return 'No luck... (30s cooldown)';
+    customData.set('gofishgame', JSON.stringify(player));
+
+    return 'Nothing... (30s cooldown)';
   }
 
   let resp = `You caught a ✨ ${fish} ✨! It weighs ${weight} lbs.`;
@@ -95,11 +100,11 @@ function main(inputArgs) {
   player.inventory.push(fish);
   updateRecord(player.history, fish, weight);
 
-  const hasDavyJonsegSet = player.inventory.includes('🗡️')
+  const hasPirateSet = player.inventory.includes('🗡️')
     && player.inventory.includes('👑')
     && player.inventory.includes('🧭');
 
-  if (hasDavyJonsegSet && hasLure && hasHook) {
+  if (hasPirateSet && hasLure && hasHook) {
     const [eatenFish, eatenWeight] = ocean.fish(true, true);
 
     if (eatenFish !== false && eatenWeight < weight) {
@@ -110,13 +115,15 @@ function main(inputArgs) {
     }
   }
 
-  resp += `${useLure(weight) && ' 🎏 broke!💢'}`
-    + `${useHook(weight) && ' 🪝 broke!💢' }`
-    + ` (30m cooldown after a catch)`
+  resp += (useLure(weight) ? ' 🎏 broke!💢' : '')
+    + (useHook(weight) ? ' 🪝 broke!💢' : '')
+    + ' (30m cooldown after a catch)';
 
   player.canFishDate = now + 1800000;
 
   customData.set('gofishgame', JSON.stringify(player));
+
+  return resp;
 }
 
 /*
