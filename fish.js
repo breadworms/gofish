@@ -214,7 +214,7 @@ function main(playerArgs, weatherArg) {
         return printRecord(arg);
       }
 
-      return `Commands: \`? <fish>\`, \`release <fish>\`, \`collection\`, \`deleteeverything\`. Read more: `;
+      return `Commands: \`? <fish>\`, \`release <fish>\`, \`collection\`, \`treasure\`, \`deleteeverything\`.`;
 
     case 'deleteeverything':
       if (arg === 'yes') {
