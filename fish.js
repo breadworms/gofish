@@ -125,6 +125,7 @@ function fish(ocean) {
 
   resp += (useLure(weight) ? ' 🎏 broke!💢' : '')
     + (useHook(weight) ? ' 🪝 broke!💢' : '')
+    + (weight > biggest ? ' A new record! 🎉' : '')
     + ' (30m cooldown after a catch)';
 
   player.canFishDate = now + 1800000;
