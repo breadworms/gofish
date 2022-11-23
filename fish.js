@@ -140,13 +140,13 @@ function printRecord(fish) {
       return `A heavy hook. Allows for fishing in the depths of the ocean. Used automatically.`;
 
     case '🗡️':
-      return `Davy Jonseg's dagger. Being you found it lodged in the remains of his ribcage suggests he was done in by his own dagger.`;
+      return `Davy Joneseg's dagger. Being you found it lodged in the remains of his ribcage suggests he was done in by his own dagger.`;
 
     case '👑':
-      return `Davy Jonseg's booty. Screw fishing, you're rich!`;
+      return `Davy Joneseg's booty. Screw fishing, you're rich!`;
 
     case '🧭':
-      return `Davy Jonseg's magic compass. No one knows where or what it points to, but it sure seems to go crazy around chicken farms!`;
+      return `Davy Joneseg's magic compass. No one knows where or what it points to, but it sure seems to go crazy around chicken farms!`;
 
     default:
       return `Caught ${(new Date(record.biggestDate)).toDateString()}: ${record.fish} ${record.biggestWeight} lbs.`
@@ -206,7 +206,7 @@ function main(playerArgs, weatherArg) {
       return `${record.fish} ${record.biggestWeight} lbs! Wow! 📸🎉`;
 
     case 'treasure':
-      return `Rumor has it that legendary pirate Davy Jonseg's treasure still lies somewhere on the ocean floor. Can you find all his treasures?`;
+      return `Rumor has it that legendary pirate Davy Joneseg's treasure still lies somewhere on the ocean floor. Can you find all his treasures?`;
 
     case '?':
     case 'help':
