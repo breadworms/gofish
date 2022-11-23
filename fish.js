@@ -148,8 +148,9 @@ function printRecord(fish) {
     case '🧭':
       return `Davy Jonseg's magic compass. No one knows where or what it points to, but it sure seems to go crazy around chicken farms!`;
 
-    default return `Caught ${(new Date(record.biggestDate)).toDateString()}: ${record.fish} ${record.biggestWeight} lbs.`
-      + ` Caught ${(new Date(record.smallestDate)).toDateString()}: ${record.fish} ${record.smallestWeight} lbs.`;
+    default:
+      return `Caught ${(new Date(record.biggestDate)).toDateString()}: ${record.fish} ${record.biggestWeight} lbs.`
+        + ` Caught ${(new Date(record.smallestDate)).toDateString()}: ${record.fish} ${record.smallestWeight} lbs.`;
   }
 }
 
