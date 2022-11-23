@@ -95,11 +95,14 @@ function fish(ocean) {
   }
 
   const biggest = player.history.reduce(
-    (a, b) => a.biggestWeight > b.biggestWeight ? a : b,
-    { biggestWeight: 0.0 }
-  ).biggestWeight;
+    (a, r) => a > r.biggestWeight ? a : r.biggestWeight,
+    0.0
+  );
 
   if (Math.random() * 100 < weight - 50 - biggest) {
+    player.canFishDate = now + 30000;
+    save(player);
+
     return `The one that got away... ${fish} was too big to land!`;
   }
 
