@@ -94,6 +94,15 @@ function fish(ocean) {
     return `${ocean.ambiance} (30s cooldown)`;
   }
 
+  const biggest = player.history.reduce(
+    (a, b) => a.biggestWeight > b.biggestWeight ? a : b,
+    { biggestWeight: 0.0 }
+  ).biggestWeight;
+
+  if (Math.random() * 100 < weight - 50 - biggest) {
+    return `The one that got away... ${fish} was too big to land!`;
+  }
+
   let resp = `You caught a ✨ ${fish} ✨! It weighs ${weight} lbs.`;
 
   player.inventory.push(fish);
@@ -104,7 +113,7 @@ function fish(ocean) {
     && player.inventory.includes('🧭');
 
   if (hasPirateSet && hasLure && hasHook) {
-    const [eatenFish, eatenWeight] = ocean.fish(true, true);
+    const [eatenFish, eatenWeight] = ocean.random(true, true);
 
     if (eatenFish !== false && eatenWeight < weight) {
       player.inventory.push(eatenFish);
@@ -203,7 +212,7 @@ function main(playerArgs, weatherArg) {
 
       const record = history.reduce((a, b) => a.biggestWeight > b.biggestWeight ? a : b);
 
-      return `${record.fish} ${record.biggestWeight} lbs! Wow! 📸🎉`;
+      return `${record.fish} ${record.biggestWeight} lbs! Wow! 📸`;
 
     case 'treasure':
       return `Rumor has it that legendary pirate Davy Joneseg's treasure still lies somewhere on the ocean floor. Can you find all his treasures?`;
