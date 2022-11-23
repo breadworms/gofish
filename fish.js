@@ -10,13 +10,14 @@
  * * * * * * * * * * */
 
 class Ocean {
-  constructor(width, height, map) {
+  constructor(width, height, ambiance, map) {
     this.width = width;
     this.height = height;
+    this.ambiance = ambiance;
     this.map = map;
   }
 
-  fish(long, deep) {
+  random(long, deep) {
     // Hardcoded: `10` max for short/shallow, `1` min offset for long/deep.
     const distance = Math.floor(Math.random() * (long ? this.width - 1 : 10)) + (long ? 1 : 0);
     const depth = Math.floor(Math.random() * (deep ? this.height - 1 : 10)) + (deep ? 1 : 0);
@@ -31,19 +32,6 @@ class Ocean {
       Math.round(Math.random() * (distance + 1) * (depth + 1) * 100) / 100
     ];
   }
-}
-
-function makeGear(inventory, gear) {
-  const index = inventory.indexOf(gear);
-
-  if (index === -1) {
-    return [false, () => false];
-  }
-
-  return [
-    true,
-    weight => Math.random() * 100 < weight / 2 && inventory.splice(inventory.indexOf(gear), 1)
-  ];
 }
 
 function updateRecord(history, fish, weight) {
@@ -72,9 +60,22 @@ function updateRecord(history, fish, weight) {
   }
 }
 
-function main(inputArgs) {
+function makeGear(inventory, gear) {
+  const index = inventory.indexOf(gear);
+
+  if (index === -1) {
+    return [false, () => false];
+  }
+
+  return [
+    true,
+    weight => Math.random() * 100 < weight / 2 && inventory.splice(inventory.indexOf(gear), 1)
+  ];
+}
+
+function fish(ocean) {
   const now = Date.now();
-  const player = Object.assign({ inventory: [], history: [], canFishDate: now }, JSON.parse(customData.get('gofishgame') ?? null));
+  const player = load();
   const canFish = new Date(player.canFishDate) - now;
 
   if (canFish > 0) {
@@ -84,15 +85,13 @@ function main(inputArgs) {
   const [hasLure, useLure] = makeGear(player.inventory, '🎏');
   const [hasHook, useHook] = makeGear(player.inventory, '🪝');
 
-  const ocean = normalOcean;
-  const [fish, weight] = ocean.fish(hasLure, hasHook);
+  const [fish, weight] = ocean.random(hasLure, hasHook);
 
   if (fish === false) {
     player.canFishDate = now + 30000;
+    save(player);
 
-    customData.set('gofishgame', JSON.stringify(player));
-
-    return 'Nothing... (30s cooldown)';
+    return `${ocean.ambiance} (30s cooldown)`;
   }
 
   let resp = `You caught a ✨ ${fish} ✨! It weighs ${weight} lbs.`;
@@ -121,26 +120,118 @@ function main(inputArgs) {
 
   player.canFishDate = now + 1800000;
 
-  customData.set('gofishgame', JSON.stringify(player));
+  save(player);
 
   return resp;
 }
 
-/*
- * interface GoFishGame {
- *   inventory: string[],
- *   history: {
- *     fish: string,
- *     smallestWeight: number,
- *     smallestDate: string,
- *     biggestWeight: number,
- *     biggestDate: string
- *   }[],
- *   canFishDate: string
- * }
- */
+function printRecord(fish) {
+  const record = load().history.find(r => r.fish === fish.trim());
 
-const normalOcean = new Ocean(20, 20, [
+  if (record === undefined) {
+    return `You've never caught a ${fish}!`;
+  }
+
+  return `Caught ${(new Date(record.biggestDate)).toDateString()}: ${record.fish} ${record.biggestWeight} lbs.`
+    + ` Caught ${(new Date(record.smallestDate)).toDateString()}: ${record.fish} ${record.smallestWeight} lbs.`;
+}
+
+function main(playerArgs, weatherArg) {
+  const [cmd, arg] = playerArgs.split(':');
+  const weather = weatherArg.trim();
+
+  // Maybe make a separate alias for sub commands, like
+  // `$$ gofishtools`. Would reduce lines of code for what is 99% of
+  // usage.
+
+  switch (cmd) {
+    case 'release':
+      if (!arg) {
+        return `No fish to release... (\`release <fish>\`)`;
+      }
+
+      const player = load();
+      const index = player.inventory.lastIndexOf(arg);
+
+      if (index === -1) {
+        return `No fish to release... (No ${arg} found in inventory)`;
+      }
+
+      player.inventory.splice(index, 1);
+      save(player);
+
+      return `Bye bye ${arg}! 🫳🌊`;
+
+    case 'collection':
+    case 'show':
+      if (!arg) {
+        const player = load();
+
+        return `Your collection: ${player.inventory.join(' ')}`;
+      }
+
+      return printRecord(arg);
+
+    case 'record':
+      if (arg) {
+        return printRecord(arg);
+      }
+
+      const history = load().history;
+
+      if (!history.length) {
+        return `You haven't caught anything.`;
+      }
+
+      const record = history.reduce((a, b) => a.biggestWeight > b.biggestWeight ? a : b);
+
+      return `${record.fish} ${record.biggestWeight} lbs! Wow! 📸🎉`;
+
+    case '?':
+    case 'help':
+      if (arg) {
+        return printRecord(arg);
+      }
+
+      return `Commands: \`? <fish>\`, \`release <fish>\`, \`collection\`, \`deleteeverything\`. Read more: `;
+
+    case 'deleteeverything':
+      if (arg === 'yes') {
+        customData.set('gofishgame');
+
+        return `All data was wiped!`;
+      }
+
+      return `This will reset all of your data, including *history, records and collection*. Use \`deleteeverything yes\` if you wish to proceed.`;
+
+    default:
+      if (['🌧', '⛈', '🌪'].includes(weather)) {
+        return fish(rainyOcean);
+      } else if (weather === '🌨') {
+        return fish(icyOcean);
+      }
+
+      return fish(normalOcean);
+  }
+}
+
+function save(player) {
+  customData.set('gofishgame', JSON.stringify(player));
+}
+
+function load() {
+  return Object.assign(
+    { inventory: [], history: [], canFishDate: Date.now() },
+    JSON.parse(customData.get('gofishgame') ?? null)
+  );
+}
+
+const customData = {
+  get: (key) => localStorage.getItem(key),
+  set: (key, value) => localStorage.setItem(key, value)
+};
+
+const normalOcean = new Ocean(20, 20, 'Nothing...', [
   // 1    2     3     4     5       6     7     8      9     10     11    12    13     14    15     16    17     18    19     20
   '🌿', '🧦', '🪝', '🪝', '🐸', '🟦', '🟦', '🟦', '🟦', '🟦', '🕷️', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🐍', // 1
   '🎏', '🐚', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🐠', '🪸', '🐡', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', // 2
@@ -164,7 +255,7 @@ const normalOcean = new Ocean(20, 20, [
   '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦' // 20
 ]);
 
-const rainyOcean = new Ocean(20, 20, [
+const rainyOcean = new Ocean(20, 20, '🌧 It rains...', [
   // 1    2     3     4     5       6     7     8      9     10     11    12    13     14    15     16    17     18    19     20
   '🌿', '🧦', '🪝', '🪝', '🟦', '🟦', '🟦', '🟦', '🐸', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🐍', // 1
   '🎏', '🐚', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🐠', '🪸', '🐡', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', // 2
@@ -188,7 +279,7 @@ const rainyOcean = new Ocean(20, 20, [
   '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦' // 20
 ]);
 
-const icyOcean = new Ocean(10, 40, [
+const icyOcean = new Ocean(10, 40, '🌨 It\'s cold...', [
   // 1    2     3     4     5       6    7     8      9      10
   '🧣', '⛸️', '🪝', '🪝', '🐸', '🟦', '🟦', '🟦', '🟦', '🟦', // 1
   '🪝', '🐚', '🟦', '🐟', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', // 2
