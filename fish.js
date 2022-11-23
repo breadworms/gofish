@@ -110,7 +110,7 @@ function fish(ocean) {
       player.inventory.push(eatenFish);
       updateRecord(player.history, eatenFish, eatenWeight);
 
-      resp += ` And!... ${eatenFish} (${weight} lbs) was in its mouth!`;
+      resp += ` And!... ${eatenFish} (${eatenWeight} lbs) was in its mouth!`;
     }
   }
 
@@ -132,8 +132,25 @@ function printRecord(fish) {
     return `You've never caught a ${fish}!`;
   }
 
-  return `Caught ${(new Date(record.biggestDate)).toDateString()}: ${record.fish} ${record.biggestWeight} lbs.`
-    + ` Caught ${(new Date(record.smallestDate)).toDateString()}: ${record.fish} ${record.smallestWeight} lbs.`;
+  switch (record.fish) {
+    case '🎏':
+      return `An aerodynamic lure. Increases the range of your line. Used automatically.`;
+
+    case '🪝':
+      return `A heavy hook. Allows for fishing in the depths of the ocean. Used automatically.`;
+
+    case '🗡️':
+      return `Davy Jonseg's dagger. Being you found it lodged in the remains of his ribcage suggests he was done in by his own dagger.`;
+
+    case '👑':
+      return `Davy Jonseg's booty. Screw fishing, you're rich!`;
+
+    case '🧭':
+      return `Davy Jonseg's magic compass. No one knows where or what it points to, but it sure seems to go crazy around chicken farms!`;
+
+    default return `Caught ${(new Date(record.biggestDate)).toDateString()}: ${record.fish} ${record.biggestWeight} lbs.`
+      + ` Caught ${(new Date(record.smallestDate)).toDateString()}: ${record.fish} ${record.smallestWeight} lbs.`;
+  }
 }
 
 function main(playerArgs, weatherArg) {
@@ -186,6 +203,9 @@ function main(playerArgs, weatherArg) {
       const record = history.reduce((a, b) => a.biggestWeight > b.biggestWeight ? a : b);
 
       return `${record.fish} ${record.biggestWeight} lbs! Wow! 📸🎉`;
+
+    case 'treasure':
+      return `Rumor has it that legendary pirate Davy Jonseg's treasure still lies somewhere on the ocean floor. Can you find all his treasures?`;
 
     case '?':
     case 'help':
