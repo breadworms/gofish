@@ -74,8 +74,16 @@ function makeGear(inventory, gear) {
 }
 
 function fish(ocean) {
-  const now = Date.now();
   const player = load();
+  const now = Date.now();
+
+  if (player.canFishDate === 0) {
+    player.canFishDate = now;
+    save(player);
+
+    return `You caught a 🗞🍾 message in a bottle! 📜 "Welcome to GO FISH GAME! Use \`help\` if you need more information. Let's go fish! -Swormbeard"`;
+  }
+
   const canFish = new Date(player.canFishDate) - now;
 
   if (canFish > 0) {
@@ -255,7 +263,7 @@ function save(player) {
 
 function load() {
   return Object.assign(
-    { inventory: [], history: [], canFishDate: Date.now() },
+    { inventory: [], history: [], canFishDate: 0 },
     JSON.parse(customData.get('gofishgame') ?? null)
   );
 }
