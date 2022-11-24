@@ -34,11 +34,11 @@ class Ocean {
   }
 }
 
-function updateRecord(history, fish, weight) {
-  const record = history.find(r => r.fish === fish);
+function updateRecord(player, fish, weight) {
+  const record = player.history.find(r => r.fish === fish);
 
   if (record === undefined) {
-    history.push({
+    player.history.push({
       fish: fish,
       smallestWeight: weight,
       smallestDate: Date.now(),
@@ -58,6 +58,9 @@ function updateRecord(history, fish, weight) {
     record.biggestWeight = weight;
     record.biggestDate = Date.now();
   }
+
+  player.lifetime += 1;
+  player.lifetimeWeight += weight;
 }
 
 function makeGear(inventory, gear) {
@@ -117,7 +120,7 @@ function fish(ocean) {
   let resp = `You caught a ✨ ${fish} ✨! It weighs ${weight} lbs.`;
 
   player.inventory.push(fish);
-  updateRecord(player.history, fish, weight);
+  updateRecord(player, fish, weight);
 
   const hasPirateSet = player.inventory.includes('🗡️')
     && player.inventory.includes('👑')
@@ -128,7 +131,7 @@ function fish(ocean) {
 
     if (eatenFish !== false && eatenWeight < weight) {
       player.inventory.push(eatenFish);
-      updateRecord(player.history, eatenFish, eatenWeight);
+      updateRecord(player, eatenFish, eatenWeight);
 
       resp += ` And!... ${eatenFish} (${eatenWeight} lbs) was in its mouth!`;
     }
@@ -184,7 +187,7 @@ function main(playerArgs, weatherArg) {
   // usage.
 
   switch (cmd) {
-    case 'release':
+    case 'release': {
       if (!arg) {
         return `No fish to release... (\`release <fish>\`)`;
       }
@@ -200,6 +203,7 @@ function main(playerArgs, weatherArg) {
       save(player);
 
       return `Bye bye ${arg}! 🫳🌊`;
+    }
 
     case 'collection':
     case 'show':
@@ -211,20 +215,21 @@ function main(playerArgs, weatherArg) {
 
       return printRecord(arg);
 
-    case 'record':
+    case 'record': {
       if (arg) {
         return printRecord(arg);
       }
 
-      const history = load().history;
+      const player = load();
 
-      if (!history.length) {
+      if (!player.history.length) {
         return `You haven't caught anything.`;
       }
 
-      const record = history.reduce((a, b) => a.biggestWeight > b.biggestWeight ? a : b);
+      const record = player.history.reduce((a, b) => a.biggestWeight > b.biggestWeight ? a : b);
 
-      return `${record.fish} ${record.biggestWeight} lbs! Wow! 📸`;
+      return `${player.lifetime} fish at ${Math.round(player.lifetimeWeight * 100) / 100} lbs. Biggest: ${record.fish} ${record.biggestWeight} lbs! Wow! 📸`;
+    }
 
     case 'treasure':
       return `Rumor has it that legendary pirate Davy Joneseg's treasure still lies somewhere on the ocean floor. Can you find all his treasures?`;
@@ -235,7 +240,7 @@ function main(playerArgs, weatherArg) {
         return printRecord(arg);
       }
 
-      return `Commands: \`? <fish>\`, \`release <fish>\`, \`collection\`, \`treasure\`, \`deleteeverything\`.`;
+      return `Commands: \`? <fish>\`, \`release <fish>\`, \`record\`, \`collection\`, \`treasure\`, \`deleteeverything\`.`;
 
     case 'deleteeverything':
       if (arg === 'yes') {
@@ -263,7 +268,7 @@ function save(player) {
 
 function load() {
   return Object.assign(
-    { inventory: [], history: [], canFishDate: 0 },
+    { inventory: [], history: [], lifetime: 0, lifetimeWeight: 0.0, canFishDate: 0 },
     JSON.parse(customData.get('gofishgame') ?? null)
   );
 }
