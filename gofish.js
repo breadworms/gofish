@@ -230,7 +230,7 @@ function main(playerArgs, weatherArg) {
 
       const record = player.history.reduce((a, b) => a.biggestWeight > b.biggestWeight ? a : b);
 
-      return `${player.lifetime} fish at ${Math.round(player.lifetimeWeight * 100) / 100} lbs. Biggest: ${record.fish} ${record.biggestWeight} lbs! Wow! 📸`;
+      return `${record.fish} ${record.biggestWeight} lbs! Wow! 📸 Overall, you've caught ${player.lifetime} fish weighing at ${Math.round(player.lifetimeWeight * 100) / 100} lbs.`;
     }
 
     case 'treasure':
