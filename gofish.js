@@ -37,6 +37,9 @@ class Ocean {
 function updateRecord(player, fish, weight) {
   const record = player.history.find(r => r.fish === fish);
 
+  player.lifetime += 1;
+  player.lifetimeWeight += weight;
+
   if (record === undefined) {
     player.history.push({
       fish: fish,
@@ -58,9 +61,6 @@ function updateRecord(player, fish, weight) {
     record.biggestWeight = weight;
     record.biggestDate = Date.now();
   }
-
-  player.lifetime += 1;
-  player.lifetimeWeight += weight;
 }
 
 function makeGear(inventory, gear) {
