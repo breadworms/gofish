@@ -263,14 +263,54 @@ function main(playerArgs, weatherArg) {
 }
 
 function save(player) {
-  customData.set('gofishgame', JSON.stringify(player));
+  customData.set('gofishgame', player);
 }
 
 function load() {
+  const data = customData.get('gofishgame');
+
+  // Temporary, will remove after 1-2 days.
+  if (typeof data === 'string') {
+    return migrate(data);
+  }
+
   return Object.assign(
     { inventory: [], history: [], lifetime: 0, lifetimeWeight: 0.0, canFishDate: 0 },
-    JSON.parse(customData.get('gofishgame') ?? null)
+    data
   );
+}
+
+function migrate(json) {
+  const player = JSON.parse(json);
+
+  let fishInHistory = 0;
+  let baseWeight = 0.0;
+
+  player.history.forEach(record => {
+    baseWeight += record.biggestWeight;
+    fishInHistory += 1;
+
+    if (record.smallestDate !== record.biggestDate) {
+      baseWeight += record.smallestWeight;
+      fishInHistory += 1;
+    }
+  });
+
+  let baseLifetime = Math.max(fishInHistory, player.inventory.length);
+
+  // 6 in history, 10 in inventory = 4 weights unaccounted for.
+  // Average fish weight is 19.
+  baseWeight += (baseLifetime - fishInHistory) * 19.0;
+
+  // Around 10% of catches are lures/hooks which break. Players might
+  // have released some, so add a little extra.
+  // Their weights aren't tallied because 19 is already a high average.
+  baseLifetime *= 1.125;
+
+  player.lifetime = Math.floor(baseLifetime);
+  player.lifetimeWeight = baseWeight;
+
+  return player;
 }
 
 const normalOcean = new Ocean(20, 20, 'Nothing...', [
