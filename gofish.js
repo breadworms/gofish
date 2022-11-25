@@ -85,6 +85,8 @@ function fish(ocean) {
     save(player);
 
     return `You caught a 🗞🍾 message in a bottle! 📜 "Welcome to GO FISH GAME! Use \`help\` if you need more information. Let's go fish! -Swormbeard"`;
+  } else if (player.inventory.length >= 200) {
+    return `Inventory full 🎒🗯️! Release some fish with \`release\` to continue! Records won't get removed.`;
   }
 
   const canFish = new Date(player.canFishDate) - now;
