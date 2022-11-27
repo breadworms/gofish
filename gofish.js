@@ -154,7 +154,7 @@ function fish() {
 }
 
 function printRecord(fish) {
-  const record = load().history.find(r => r.fish === fish.trim());
+  const record = load().history.find(r => r.fish.replace('\ufe0f', '') === fish.replace(/[\s\ufe0f]/g, ''));
 
   if (record === undefined) {
     return `You've never caught a ${fish}!`;
