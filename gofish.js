@@ -154,7 +154,9 @@ function fish() {
 }
 
 function printRecord(fish) {
-  const record = load().history.find(r => r.fish.replace('\ufe0f', '') === fish.replace(/[\s\ufe0f]/g, ''));
+  const record = load().history.find(
+    r => r.fish.replace('\ufe0f', '') === fish.replace(/[\s\ufe0f]/g, '')
+  );
 
   if (record === undefined) {
     return `You've never caught a ${fish}!`;
@@ -196,7 +198,9 @@ function main(playerArgs) {
       }
 
       const player = load();
-      const index = player.inventory.lastIndexOf(arg);
+      const index = player.inventory.findLastIndex(
+        fish => fish.replace('\ufe0f', '') === arg.replace('\ufe0f', '')
+      );
 
       if (index === -1) {
         return `No fish to release... (No ${arg} found in inventory)`;
