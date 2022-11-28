@@ -37,9 +37,6 @@ class Ocean {
 function updateRecord(player, fish, weight) {
   const record = player.history.find(r => r.fish === fish);
 
-  player.lifetime += 1;
-  player.lifetimeWeight += weight;
-
   if (record === undefined) {
     player.history.push({
       fish: fish,
@@ -48,19 +45,20 @@ function updateRecord(player, fish, weight) {
       biggestWeight: weight,
       biggestDate: Date.now()
     });
+  } else {
+    if (weight < record.smallestWeight) {
+      record.smallestWeight = weight;
+      record.smallestDate = Date.now();
+    }
 
-    return;
+    if (weight > record.biggestWeight) {
+      record.biggestWeight = weight;
+      record.biggestDate = Date.now();
+    }
   }
 
-  if (record.smallestWeight > weight) {
-    record.smallestWeight = weight;
-    record.smallestDate = Date.now();
-  }
-
-  if (record.biggestWeight < weight) {
-    record.biggestWeight = weight;
-    record.biggestDate = Date.now();
-  }
+  player.lifetime += 1;
+  player.lifetimeWeight += weight;
 }
 
 function makeGear(inventory, gear) {
@@ -80,7 +78,6 @@ function fish() {
   const player = load();
   const date = new Date();
   const now = date.getTime();
-  const ocean = weatherForecast?.[date.getMonth() + 1]?.[date.getDate()] ?? normalOcean;
 
   if (player.canFishDate === 0) {
     player.canFishDate = now;
@@ -100,6 +97,7 @@ function fish() {
   const [hasLure, useLure] = makeGear(player.inventory, '🎏');
   const [hasHook, useHook] = makeGear(player.inventory, '🪝');
 
+  const ocean = weatherForecast?.[date.getMonth() + 1]?.[date.getDate()] ?? normalOcean;
   const [fish, weight] = ocean.random(hasLure, hasHook);
 
   if (fish === false) {
@@ -130,7 +128,7 @@ function fish() {
     && player.inventory.includes('👑')
     && player.inventory.includes('🧭');
 
-  if (hasPirateSet && hasLure && hasHook) {
+  if (hasPirateSet) {
     const [eatenFish, eatenWeight] = ocean.random(true, true);
 
     if (eatenFish !== false && eatenWeight < weight) {
@@ -147,7 +145,6 @@ function fish() {
     + ' (30m cooldown after a catch)';
 
   player.canFishDate = now + 1800000;
-
   save(player);
 
   return resp;
@@ -213,14 +210,15 @@ function main(playerArgs) {
     }
 
     case 'collection':
-    case 'show':
-      if (!arg) {
-        const player = load();
-
-        return `Your collection: ${player.inventory.join(' ')}`;
+    case 'show': {
+      if (arg) {
+        return printRecord(arg);
       }
 
-      return printRecord(arg);
+      const player = load();
+
+      return `Your collection: ${player.inventory.join(' ')}`;
+    }
 
     case 'record': {
       if (arg) {
@@ -268,50 +266,10 @@ function save(player) {
 }
 
 function load() {
-  const data = customData.get('gofishgame');
-
-  // Temporary, will remove after 1-2 days.
-  if (typeof data === 'string') {
-    return migrate(data);
-  }
-
   return Object.assign(
     { inventory: [], history: [], lifetime: 0, lifetimeWeight: 0.0, canFishDate: 0 },
-    data
+    customData.get('gofishgame')
   );
-}
-
-function migrate(json) {
-  const player = JSON.parse(json);
-
-  let fishInHistory = 0;
-  let baseWeight = 0.0;
-
-  player.history.forEach(record => {
-    baseWeight += record.biggestWeight;
-    fishInHistory += 1;
-
-    if (record.smallestDate !== record.biggestDate) {
-      baseWeight += record.smallestWeight;
-      fishInHistory += 1;
-    }
-  });
-
-  let baseLifetime = Math.max(fishInHistory, player.inventory.length);
-
-  // 6 in history, 10 in inventory = 4 weights unaccounted for.
-  // Average fish weight is 19.
-  baseWeight += (baseLifetime - fishInHistory) * 19.0;
-
-  // Around 10% of catches are lures/hooks which break. Players might
-  // have released some, so add a little extra.
-  // Their weights aren't tallied because 19 is already a high average.
-  baseLifetime *= 1.125;
-
-  player.lifetime = Math.floor(baseLifetime);
-  player.lifetimeWeight = baseWeight;
-
-  return player;
 }
 
 const normalOcean = new Ocean(20, 20, 'Nothing...', [
@@ -408,6 +366,7 @@ const icyOcean = new Ocean(10, 40, '🌨 It\'s cold...', [
 
 const weatherForecast = {
   11: {
+    29: rainyOcean,
     30: rainyOcean
   },
   12: {
