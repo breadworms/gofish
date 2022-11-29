@@ -5,10 +5,10 @@
     "./src/fish.ts",
     "./src/main.ts",
     "./src/player.ts",
-    "./src/maps/calm.ts",
-    "./src/maps/rain.ts",
-    "./src/maps/ice.ts",
-    "./src/maps/forecast.ts"
+    "./src/static/calmOcean.ts",
+    "./src/static/rainOcean.ts",
+    "./src/static/iceOcean.ts",
+    "./src/static/forecast.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,

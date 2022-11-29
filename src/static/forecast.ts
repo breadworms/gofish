@@ -6,8 +6,7 @@ type WeatherForecast = {
 
 const weatherForecast: WeatherForecast = {
   11: {
-    29: rainyOcean,
-    30: rainyOcean
+    29: rainyOcean
   },
   12: {
     1: rainyOcean,
