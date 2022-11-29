@@ -1,0 +1,27 @@
+{
+  "files": [
+    "./src/sandbox.d.ts",
+    "./src/Ocean.ts",
+    "./src/fish.ts",
+    "./src/main.ts",
+    "./src/player.ts",
+    "./src/maps/calm.ts",
+    "./src/maps/rain.ts",
+    "./src/maps/ice.ts",
+    "./src/maps/forecast.ts"
+  ],
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "strict": true,
+    "alwaysStrict": false,
+    "skipLibCheck": true,
+    "target": "esnext",
+    "module": "none",
+    "moduleResolution": "node",
+    "lib": ["esnext"],
+    "types": [],
+    "outFile": "dist/gofish.js"
+  }
+}

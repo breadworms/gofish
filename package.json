@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "gofish",
+  "version": "0.1.0",
+  "main": "./dist/index.js",
+  "scripts": {
+    "start": "tsc --watch",
+    "build": "tsc && uglifyjs ./dist/gofish.js -o ./dist/gofish.min.js"
+  },
+  "devDependencies": {
+    "supibot-package-manager": "github:supinic/supibot-package-manager",
+    "typescript": "^4.9.3",
+    "uglify-js": "^3.17.4"
+  }
+}
