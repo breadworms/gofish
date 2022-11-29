@@ -1,4 +1,4 @@
-function updateRecord(player: Player, fish: string, weight: number) {
+function updateRecord(player: Player, fish: string, weight: number): void {
   const record = player.history.find(r => r.fish === fish);
 
   if (record === undefined) {
@@ -34,7 +34,7 @@ function makeGear(inventory: string[], gear: string): [boolean, (weight: number)
 
   return [
     true,
-    (weight: number) => {
+    weight => {
       if (Math.random() * 100 < weight / 2) {
         inventory.splice(inventory.indexOf(gear), 1);
 
@@ -46,7 +46,7 @@ function makeGear(inventory: string[], gear: string): [boolean, (weight: number)
   ];
 }
 
-function fish() {
+function fish(): string {
   const player = load();
   const date = new Date();
   const now = date.getTime();
@@ -69,7 +69,7 @@ function fish() {
   const [hasLure, useLure] = makeGear(player.inventory, '🎏');
   const [hasHook, useHook] = makeGear(player.inventory, '🪝');
 
-  const ocean = normalOcean ?? weatherForecast?.[date.getMonth() + 1]?.[date.getDate()] ?? normalOcean;
+  const ocean = weatherForecast?.[date.getMonth() + 1]?.[date.getDate()] ?? normalOcean;
   const [fish, weight] = ocean.random(hasLure, hasHook);
 
   if (fish === false) {

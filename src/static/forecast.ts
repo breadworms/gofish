@@ -1,6 +1,6 @@
 type WeatherForecast = {
-  [key: number]: {
-    [key: number]: Ocean
+  [month: number]: {
+    [day: number]: Ocean
   }
 };
 

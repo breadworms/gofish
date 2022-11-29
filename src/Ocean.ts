@@ -13,7 +13,7 @@ class Ocean {
     this.ambiance = ambiance;
   }
 
-  random(long: boolean, deep: boolean): [false | string, number] {
+  public random(long: boolean, deep: boolean): [false | string, number] {
     // Hardcoded: `10` max for short/shallow, `1` min offset for long/deep.
     const distance = Math.floor(Math.random() * (long ? this.width - 1 : 10)) + (long ? 1 : 0);
     const depth = Math.floor(Math.random() * (deep ? this.height - 1 : 10)) + (deep ? 1 : 0);

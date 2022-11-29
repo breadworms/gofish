@@ -1,4 +1,4 @@
-function printRecord(fish: string) {
+function printRecord(fish: string): string {
   const record = load().history.find(
     r => r.fish.replace('\ufe0f', '') === fish.replace(/[\s\ufe0f]/g, '')
   );
@@ -29,7 +29,7 @@ function printRecord(fish: string) {
   }
 }
 
-function main(playerArgs: string) {
+function main(playerArgs: string): string {
   const [cmd, arg] = playerArgs.split(':');
 
   // Maybe make a separate alias for sub commands, like

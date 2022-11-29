@@ -2,7 +2,6 @@
   "private": true,
   "name": "gofish",
   "version": "0.1.0",
-  "main": "./dist/index.js",
   "scripts": {
     "start": "tsc --watch",
     "build": "tsc && uglifyjs ./dist/gofish.js -o ./dist/gofish.min.js"

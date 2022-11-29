@@ -1,22 +1,22 @@
 type ECMAScriptTimestamp = number;
 
-interface PlayerRecord {
+type PlayerRecord = {
   fish: string;
   smallestWeight: number;
   smallestDate: ECMAScriptTimestamp;
   biggestWeight: number;
   biggestDate: ECMAScriptTimestamp;
-}
+};
 
-interface Player {
+type Player = {
   inventory: string[];
   history: PlayerRecord[];
   lifetime: number;
   lifetimeWeight: number;
   canFishDate: ECMAScriptTimestamp;
-}
+};
 
-function save(player: Player) {
+function save(player: Player): void {
   customData.set('gofishgame', player as Player & { [key: string]: any });
 }
 
