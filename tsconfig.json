@@ -1,9 +1,9 @@
 {
   "files": [
-    "./src/sandbox.d.ts",
+    "./sandbox.d.ts",
     "./src/Ocean.ts",
     "./src/fish.ts",
-    "./src/main.ts",
+    "./src/cli.ts",
     "./src/player.ts",
     "./src/static/calmOcean.ts",
     "./src/static/rainOcean.ts",
