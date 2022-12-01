@@ -1,3 +1,20 @@
+function random(ocean: GameMap, long: boolean, deep: boolean): { fish: false | string, weight: number } {
+  // Hardcoded: `10` max for short/shallow, `1` min offset
+  // for long/deep.
+  const distance = Math.floor(Math.random() * (long ? ocean.width - 1 : 10)) + (long ? 1 : 0);
+  const depth = Math.floor(Math.random() * (deep ? ocean.height - 1 : 10)) + (deep ? 1 : 0);
+  const coord = depth * ocean.width + distance;
+
+  if (ocean.map[coord] === '🟦') {
+    return { fish: false, weight: 0.0 };
+  }
+
+  return {
+    fish: ocean.map[coord],
+    weight: Math.round(Math.random() * (distance + 1) * (depth + 1) * 100) / 100
+  };
+}
+
 function updateRecord(player: Player, fish: string, weight: number): void {
   const record = player.history.find(r => r.fish === fish);
 
@@ -25,28 +42,11 @@ function updateRecord(player: Player, fish: string, weight: number): void {
   player.lifetimeWeight += weight;
 }
 
-function makeGear(inventory: string[], gear: string): [boolean, (weight: number) => boolean] {
-  const index = inventory.indexOf(gear);
-
-  if (index === -1) {
-    return [false, () => false];
-  }
-
-  return [
-    true,
-    weight => {
-      if (Math.random() * 100 < weight / 2) {
-        inventory.splice(inventory.indexOf(gear), 1);
-
-        return true;
-      }
-
-      return false;
-    }
-  ];
+function breakGear(inventory: string[], gear: string, weight: number): boolean {
+  return Math.random() * 100 < weight / 2 && !!inventory.splice(inventory.indexOf(gear), 1);
 }
 
-function fish(): string {
+function gofish(): string {
   const player = load();
   const date = new Date();
   const now = date.getTime();
@@ -60,17 +60,24 @@ function fish(): string {
     return `Inventory full 🎒🗯️! Release some fish with \`release\` to continue! Records won't get removed.`;
   }
 
-  const canFish = player.canFishDate - now;
-
-  if (canFish > 0) {
-    return `Ready to fish in ${canFish < 60000 ? Math.ceil(canFish / 1000) + 's' : Math.ceil(canFish / 1000 / 60) + 'm'}`;
+  if (player.canFishDate - now > 0) {
+    return `Ready to fish ${utils.timeDelta(player.canFishDate)}`;
   }
 
-  const [hasLure, useLure] = makeGear(player.inventory, '🎏');
-  const [hasHook, useHook] = makeGear(player.inventory, '🪝');
+  const weatherKey = (date.getMonth() + 1) + '.' + date.getDate();
+  const ocean = (
+    FORECAST[weatherKey + '.' + date.getHours()]
+      ?? FORECAST[weatherKey]
+      ?? CALM_OCEAN
+  )();
 
-  const ocean = weatherForecast?.[date.getMonth() + 1]?.[date.getDate()] ?? normalOcean;
-  const [fish, weight] = ocean.random(hasLure, hasHook);
+  // Do a reverse search on gear since it will always be close to
+  // the end.
+  const { fish, weight } = random(
+    ocean,
+    player.inventory.lastIndexOf('🎏') !== -1,
+    player.inventory.lastIndexOf('🪝') !== -1
+  );
 
   if (fish === false) {
     player.canFishDate = now + 30000;
@@ -101,7 +108,7 @@ function fish(): string {
     && player.inventory.includes('🧭');
 
   if (hasPirateSet) {
-    const [eatenFish, eatenWeight] = ocean.random(true, true);
+    const { fish: eatenFish, weight: eatenWeight } = random(ocean, true, true);
 
     if (eatenFish !== false && eatenWeight < weight) {
       player.inventory.push(eatenFish);
@@ -111,8 +118,8 @@ function fish(): string {
     }
   }
 
-  resp += (useLure(weight) ? ' 🎏 broke!💢' : '')
-    + (useHook(weight) ? ' 🪝 broke!💢' : '')
+  resp += (breakGear(player.inventory, '🎏', weight) ? ' 🎏 broke!💢' : '')
+    + (breakGear(player.inventory, '🪝', weight) ? ' 🪝 broke!💢' : '')
     + (weight > biggest ? ' A new record! 🎉' : '')
     + ' (30m cooldown after a catch)';
 

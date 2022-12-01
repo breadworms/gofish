@@ -105,6 +105,6 @@ function main(playerArgs: string): string {
       return `This will reset all of your data, including *history, records and collection*. Use \`deleteeverything yes\` if you wish to proceed.`;
 
     default:
-      return fish();
+      return gofish();
   }
 }

@@ -1,14 +1,10 @@
 {
   "files": [
     "./sandbox.d.ts",
-    "./src/Ocean.ts",
-    "./src/fish.ts",
+    "./src/gofish.ts",
     "./src/cli.ts",
     "./src/player.ts",
-    "./src/static/calmOcean.ts",
-    "./src/static/rainOcean.ts",
-    "./src/static/iceOcean.ts",
-    "./src/static/forecast.ts"
+    "./src/constants.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,
