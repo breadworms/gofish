@@ -42,8 +42,17 @@ function updateRecord(player: Player, fish: string, weight: number): void {
   player.lifetimeWeight += weight;
 }
 
-function breakGear(inventory: string[], gear: string, weight: number): boolean {
-  return Math.random() * 100 < weight / 2 && !!inventory.splice(inventory.indexOf(gear), 1);
+function makeGear(inventory: string[], gear: string): { canUse: boolean, use: (weight: number) => boolean } {
+  const index = inventory.lastIndexOf(gear);
+
+  if (index === -1) {
+    return { canUse: false, use: () => false };
+  }
+
+  return {
+    canUse: true,
+    use: weight => Math.random() * 100 < weight / 2 && !!inventory.splice(inventory.indexOf(gear), 1)
+  };
 }
 
 function gofish(): string {
@@ -71,13 +80,10 @@ function gofish(): string {
       ?? CALM_OCEAN
   )();
 
-  // Do a reverse search on gear since it will always be close to
-  // the end.
-  const { fish, weight } = random(
-    ocean,
-    player.inventory.lastIndexOf('🎏') !== -1,
-    player.inventory.lastIndexOf('🪝') !== -1
-  );
+  const lure = makeGear(player.inventory, '🎏');
+  const hook = makeGear(player.inventory, '🪝');
+
+  const { fish, weight } = random(ocean, lure.canUse, hook.canUse);
 
   if (fish === false) {
     player.canFishDate = now + 30000;
@@ -118,8 +124,8 @@ function gofish(): string {
     }
   }
 
-  resp += (breakGear(player.inventory, '🎏', weight) ? ' 🎏 broke!💢' : '')
-    + (breakGear(player.inventory, '🪝', weight) ? ' 🪝 broke!💢' : '')
+  resp += (lure.use(weight) ? ' 🎏 broke!💢' : '')
+    + (hook.use(weight) ? ' 🪝 broke!💢' : '')
     + (weight > biggest ? ' A new record! 🎉' : '')
     + ' (30m cooldown after a catch)';
 
