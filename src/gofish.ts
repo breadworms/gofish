@@ -43,9 +43,7 @@ function updateRecord(player: Player, fish: string, weight: number): void {
 }
 
 function makeGear(inventory: string[], gear: string): { canUse: boolean, use: (weight: number) => boolean } {
-  const index = inventory.lastIndexOf(gear);
-
-  if (index === -1) {
+  if (inventory.lastIndexOf(gear) === -1) {
     return { canUse: false, use: () => false };
   }
 
