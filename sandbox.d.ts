@@ -10,6 +10,7 @@ declare global {
 	const _teePush = DankDebug._teePush;
 	const channelCustomData = DankDebug.channelCustomData;
 	const customData = DankDebug.customData;
+  const query = DankDebug.query;
 	const utils = DankDebug.utils;
 
   // This isn't in esnext yet for some reason.
