@@ -59,6 +59,11 @@ function gofish(): string {
     save(player);
 
     return `You caught a 🗞🍾 message in a bottle! 📃 "Welcome to GO FISH GAME! Use \`help\` if you need more information. Let's go fish! -Swormbeard"`;
+  } else if (player.canFishDate === -1) {
+    player.canFishDate = now;
+    save(player);
+
+    return `You caught a 🗞🍾 message in a bottle! 📃 "Ahoy sailor! Season 2 of GO FISH GAME starts, it's time for a fresh start! -Swormbeard (P.S. I promise not to do this again)"`;
   } else if (player.inventory.length >= 200) {
     return `Inventory full 🎒🗯️! Release some fish with \`release\` to continue! Records won't get removed.`;
   }
