@@ -34,29 +34,15 @@ function load(): Player {
 }
 
 function migrate(player: Player) {
+  const reset = ['🗡️', '🦂', '🦭', '🐧', '🧭', '👑', '🧜‍♀️'];
+
   player.history = player.history.filter(
-    record => [
-      '🌿',
-      '🧦',
-      '🐸',
-      '🦀',
-      '🐚',
-      '🐟',
-      '💀'
-    ].includes(record.fish)
+    record => !reset.includes(record.fish)
   );
 
   player.inventory = player.inventory.filter(
-    fish => [
-      '🧦'
-    ].includes(fish)
+    fish => !reset.includes(fish)
   );
 
-  const candies = Math.floor(player.lifetime * 0.02);
-
-  for (let i = 0; i < candies; i++) {
-    player.inventory.push('🍬');
-  }
-
-  player.canFishDate = -1;
+  player.canFishDate = Date.now();
 }
