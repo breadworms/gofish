@@ -54,7 +54,7 @@ function migrate(player: Player) {
 
   const candies = Math.floor(player.lifetime * 0.02);
 
-  for (let i = 0; i < candies) {
+  for (let i = 0; i < candies; i++) {
     player.inventory.push('🍬');
   }
 
