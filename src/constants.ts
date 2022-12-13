@@ -380,7 +380,7 @@ const TIMEOFDAY = [
 ];
 
 const FORECAST: GameForecast = {
-  '12.13:n': RAINY_OCEAN, '12.13:m': ICE_FISHING,
+  '12.13:n': RAINY_OCEAN, '12.13:m': WINDY_OCEAN,
   '12.14:n': RAINY_OCEAN,
   '12.15:e': WINDY_OCEAN
 };
