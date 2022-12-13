@@ -26,7 +26,7 @@ function load(): Player {
     customData.get('gofishgame')
   );
 
-  if (player.canFishDate > 0 && player.canFishDate < 1670887583316) {
+  if (player.canFishDate < 1670887583316 && player.canFishDate > 0) {
     migrate(player);
   }
 
