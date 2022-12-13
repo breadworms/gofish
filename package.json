@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "start": "tsc --watch",
-    "build": "tsc && uglifyjs ./dist/gofish.js -m toplevel,reserved=['main'] -o ./dist/gofish.min.js"
+    "build": "tsc && node ./tools/build.mjs"
   },
   "devDependencies": {
     "supibot-package-manager": "github:supinic/supibot-package-manager",

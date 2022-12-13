@@ -39,8 +39,8 @@ function makeGear(inventory: string[], gear: string): { canUse: boolean, use: (w
 function at(ocean: GameMap, distance: number, depth: number): { fish: false | string, weight: number } {
   const fish = ocean.map[depth * ocean.width + distance];
 
-  if (fish === '🟦') {
-    return { fish: false, weight: 0.0 };
+  if (fish === false) {
+    return { fish, weight: 0.0 };
   }
 
   return {
