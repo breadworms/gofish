@@ -44,7 +44,7 @@ function at(ocean: GameMap, distance: number, depth: number): { fish: false | st
   }
 
   return {
-    fish,
+    fish: typeof fish === 'string' ? fish : fish(),
     weight: Math.round(Math.random() * (distance + 1) * (depth + 1) * 100) / 100
   };
 }
@@ -58,7 +58,7 @@ function gofish(): string {
     player.canFishDate = now;
     save(player);
 
-    return `You caught a 🗞🍾 message in a bottle! 📜 "Welcome to GO FISH GAME! Use \`help\` if you need more information. Let's go fish! -Swormbeard"`;
+    return `You caught a 🗞🍾 message in a bottle! 📃 "Welcome to GO FISH GAME! Use \`help\` if you need more information. Let's go fish! -Swormbeard"`;
   } else if (player.inventory.length >= 200) {
     return `Inventory full 🎒🗯️! Release some fish with \`release\` to continue! Records won't get removed.`;
   }
@@ -68,9 +68,9 @@ function gofish(): string {
   }
 
   const weatherKey = (date.getMonth() + 1) + '.' + date.getDate();
-  const ocean = (FORECAST[weatherKey + '.' + date.getHours()]
+  const ocean = (FORECAST[weatherKey + ':' + TIMEOFDAY[date.getHours()]]
     ?? FORECAST[weatherKey]
-    ?? CALM_OCEAN)();
+    ?? CALM_OCEAN)(player);
 
   const lure = makeGear(player.inventory, '🎏');
   const hook = makeGear(player.inventory, '🪝');
