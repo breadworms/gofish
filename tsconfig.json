@@ -1,7 +1,7 @@
 {
   "files": [
     "./sandbox.d.ts",
-    "./src/gofish.ts",
+    "./src/game.ts",
     "./src/cli.ts",
     "./src/player.ts",
     "./src/constants.ts"
