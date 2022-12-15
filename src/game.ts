@@ -3,7 +3,7 @@ function getOcean(date: Date): GameMapResolver {
 
   return (FORECAST[weatherKey + ':' + TIMEOFDAY[date.getHours()]]
     ?? FORECAST[weatherKey]
-    ?? CALM_OCEAN)
+    ?? CALM_OCEAN);
 }
 
 function getFish(ocean: GameMap, distance: number, depth: number): { fish: false | string, weight: number } {
