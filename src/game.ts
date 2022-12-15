@@ -1,3 +1,35 @@
+function getOcean(date: Date): GameMapResolver {
+  const weatherKey = (date.getMonth() + 1) + '.' + date.getDate();
+
+  return (FORECAST[weatherKey + ':' + TIMEOFDAY[date.getHours()]]
+    ?? FORECAST[weatherKey]
+    ?? CALM_OCEAN)
+}
+
+function getFish(ocean: GameMap, distance: number, depth: number): { fish: false | string, weight: number } {
+  const fish = ocean.map[depth * ocean.width + distance];
+
+  if (fish === false) {
+    return { fish, weight: 0.0 };
+  }
+
+  return {
+    fish: typeof fish === 'string' ? fish : fish(),
+    weight: Math.round(Math.random() * (distance + 1) * (depth + 1) * 100) / 100
+  };
+}
+
+function makeGear(inventory: string[], gear: string): { canUse: boolean, use: (weight: number) => boolean } {
+  if (inventory.lastIndexOf(gear) === -1) {
+    return { canUse: false, use: () => false };
+  }
+
+  return {
+    canUse: true,
+    use: weight => Math.random() * 100 < weight / 2 && !!inventory.splice(inventory.indexOf(gear), 1)
+  };
+}
+
 function updateRecord(player: Player, fish: string, weight: number): void {
   const record = player.history.find(r => r.fish === fish);
 
@@ -25,30 +57,6 @@ function updateRecord(player: Player, fish: string, weight: number): void {
   player.lifetimeWeight += weight;
 }
 
-function makeGear(inventory: string[], gear: string): { canUse: boolean, use: (weight: number) => boolean } {
-  if (inventory.lastIndexOf(gear) === -1) {
-    return { canUse: false, use: () => false };
-  }
-
-  return {
-    canUse: true,
-    use: weight => Math.random() * 100 < weight / 2 && !!inventory.splice(inventory.indexOf(gear), 1)
-  };
-}
-
-function at(ocean: GameMap, distance: number, depth: number): { fish: false | string, weight: number } {
-  const fish = ocean.map[depth * ocean.width + distance];
-
-  if (fish === false) {
-    return { fish, weight: 0.0 };
-  }
-
-  return {
-    fish: typeof fish === 'string' ? fish : fish(),
-    weight: Math.round(Math.random() * (distance + 1) * (depth + 1) * 100) / 100
-  };
-}
-
 function gofish(): string {
   const player = load();
   const date = new Date();
@@ -67,15 +75,12 @@ function gofish(): string {
     return `Ready to fish ${utils.timeDelta(player.canFishDate)}`;
   }
 
-  const weatherKey = (date.getMonth() + 1) + '.' + date.getDate();
-  const ocean = (FORECAST[weatherKey + ':' + TIMEOFDAY[date.getHours()]]
-    ?? FORECAST[weatherKey]
-    ?? CALM_OCEAN)(player);
+  const ocean = getOcean(date)(player);
 
   const lure = makeGear(player.inventory, '🎏');
   const hook = makeGear(player.inventory, '🪝');
 
-  const { fish, weight } = at(
+  const { fish, weight } = getFish(
     ocean,
     Math.floor(Math.random() * (lure.canUse ? ocean.width - 1 : 10)) + (lure.canUse ? 1 : 0),
     Math.floor(Math.random() * (hook.canUse ? ocean.height - 1 : 10)) + (hook.canUse ? 1 : 0)
@@ -110,7 +115,7 @@ function gofish(): string {
     && player.inventory.includes('👑')
     && player.inventory.includes('🧭')
   ) {
-    const eaten = at(
+    const eaten = getFish(
       ocean,
       Math.floor(Math.random() * ocean.width),
       Math.floor(Math.random() * ocean.height)

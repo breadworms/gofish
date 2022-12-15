@@ -1,3 +1,15 @@
+function printWeather(): string {
+  const player = load();
+  const today = getOcean(new Date())(player);
+  const later = getOcean(new Date(Date.now() + 21600000))(player);
+
+  if (today.ambiance === later.ambiance) {
+    return `📺💬 ${today.reports().continuous}`;
+  }
+
+  return `📺💬 ${today.reports().current} ${later.reports().impending}`;
+}
+
 function printRecord(fish: string): string {
   const record = load().history.find(
     r => r.fish.replace('\ufe0f', '') === fish.replace(/[\s\ufe0f]/g, '')
@@ -86,6 +98,9 @@ function main(playerArgs: string): string {
 
     case 'treasure':
       return `Rumor has it that legendary pirate Davy Joneseg's treasure still lies somewhere on the ocean floor. Can you find all his treasures?`;
+
+    case 'weather':
+      return printWeather();
 
     case '?':
     case 'help':
