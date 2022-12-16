@@ -93,10 +93,18 @@ function gofish(): string {
     return `${ocean.ambiance} (30s cooldown)`;
   }
 
-  const biggest = player.history.reduce(
-    (a, r) => a > r.biggestWeight ? a : r.biggestWeight,
-    0.0
-  );
+  let biggest = 0.0;
+  let flair = '🫧';
+
+  for (const record of player.history) {
+    if (record.biggestWeight > biggest) {
+      biggest = record.biggestWeight;
+    }
+
+    if (record.fish === fish) {
+      flair = '✨';
+    }
+  }
 
   if (Math.random() * 100 < weight - 50 - biggest) {
     player.canFishDate = now + 30000;
@@ -105,7 +113,7 @@ function gofish(): string {
     return `The one that got away... ${fish} was too big to land!`;
   }
 
-  let resp = `You caught a ✨ ${fish} ✨! It weighs ${weight} lbs.`;
+  let resp = `You caught a ${flair} ${fish} ${flair}! It weighs ${weight} lbs.`;
 
   player.inventory.push(fish);
   updateRecord(player, fish, weight);
