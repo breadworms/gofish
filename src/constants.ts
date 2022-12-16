@@ -12,10 +12,6 @@ type GameMap = {
 
 type GameMapResolver = (player: Player) => GameMap;
 
-type GameForecast = {
-  readonly [date: string]: GameMapResolver
-};
-
 const CALM_OCEAN: GameMapResolver = p => ({
   width: 20,
   height: 20,
@@ -372,14 +368,14 @@ const ALIEN_SHIP: GameMapResolver = () => ({
   map: []
 });
 
-const TIMEOFDAY = [
+const TIMEOFDAY: readonly string[] = [
   'n', 'n', 'n', 'n', 'n', 'n',
   'm', 'm', 'm', 'm', 'm', 'm',
   'a', 'a', 'a', 'a', 'a', 'a',
   'e', 'e', 'e', 'e', 'e', 'e'
 ];
 
-const FORECAST: GameForecast = {
+const FORECAST: { readonly [date: string]: GameMapResolver } = {
   '12.13:n': RAINY_OCEAN, '12.13:m': WINDY_OCEAN,
   '12.14:n': RAINY_OCEAN,
   '12.15:e': WINDY_OCEAN
