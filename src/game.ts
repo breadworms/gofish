@@ -1,36 +1,22 @@
 function getOcean(date: Date): GameMapResolver {
-  const weatherKey = (date.getMonth() + 1) + '.' + date.getDate();
-
-  return (FORECAST[weatherKey + ':' + TIMEOFDAY[date.getHours()]]
-    ?? FORECAST[weatherKey]
-    ?? CALM_OCEAN);
+  return FORECAST[`${date.getMonth() + 1}.${date.getDate()}:${TIMEOFDAY[date.getHours()]}`]
+    ?? CALM_OCEAN;
 }
 
-function getFish(ocean: GameMap, distance: number, depth: number): { fish: false | string, weight: number } {
-  const fish = ocean.map[depth * ocean.width + distance];
+function getFish(ocean: GameMap, range: number, depth: number): { fish: false | string, weight: number } {
+  const fish = ocean.map[depth * ocean.width + range];
 
-  if (fish === false) {
-    return { fish, weight: 0.0 };
+  if (fish === '🟦') {
+    return { fish: false, weight: 0.0 };
   }
 
   return {
     fish: typeof fish === 'string' ? fish : fish(),
-    weight: Math.round(Math.random() * (distance + 1) * (depth + 1) * 100) / 100
+    weight: Math.round(Math.random() * (range + 1) * (depth + 1) * 100) / 100
   };
 }
 
-function makeGear(inventory: string[], gear: string): { canUse: boolean, use: (weight: number) => boolean } {
-  if (inventory.lastIndexOf(gear) === -1) {
-    return { canUse: false, use: () => false };
-  }
-
-  return {
-    canUse: true,
-    use: weight => Math.random() * 100 < weight / 2 && !!inventory.splice(inventory.indexOf(gear), 1)
-  };
-}
-
-function updateRecord(player: Player, fish: string, weight: number): void {
+function addFish(player: Player, fish: string, weight: number): void {
   const record = player.history.find(r => r.fish === fish);
 
   if (record === undefined) {
@@ -55,6 +41,18 @@ function updateRecord(player: Player, fish: string, weight: number): void {
 
   player.lifetime += 1;
   player.lifetimeWeight += weight;
+
+  player.inventory.push(fish);
+}
+
+function breakGear(inventory: string[], gear: string, weight: number): boolean {
+  if (Math.random() * 100 < weight / 2) {
+    inventory.splice(inventory.indexOf(gear), 1);
+
+    return true;
+  }
+
+  return false;
 }
 
 function gofish(): string {
@@ -77,13 +75,25 @@ function gofish(): string {
 
   const ocean = getOcean(date)(player);
 
-  const lure = makeGear(player.inventory, '🎏');
-  const hook = makeGear(player.inventory, '🪝');
+  let minRange = 0, maxRange = 10;
+  let minDepth = 0, maxDepth = 10;
+
+  // Go through player inventory, checking for lures, hooks and
+  // slot machines.
+  for (let i = player.inventory.length - 1; i > -1; i--) {
+    if (player.inventory[i] === '🎏') {
+      maxRange = ocean.width - 1;
+      minRange = 1;
+    } else if (player.inventory[i] === '🪝') {
+      maxDepth = ocean.height - 1;
+      minDepth = 1;
+    }
+  }
 
   const { fish, weight } = getFish(
     ocean,
-    Math.floor(Math.random() * (lure.canUse ? ocean.width - 1 : 10)) + (lure.canUse ? 1 : 0),
-    Math.floor(Math.random() * (hook.canUse ? ocean.height - 1 : 10)) + (hook.canUse ? 1 : 0)
+    Math.floor(Math.random() * maxRange) + minRange,
+    Math.floor(Math.random() * maxDepth) + minDepth
   );
 
   if (fish === false) {
@@ -96,6 +106,8 @@ function gofish(): string {
   let biggest = 0.0;
   let flair = '🫧';
 
+  // Go through player history, checking for previous biggest fish and
+  // if it's a new type of fish.
   for (const record of player.history) {
     if (record.biggestWeight > biggest) {
       biggest = record.biggestWeight;
@@ -106,6 +118,8 @@ function gofish(): string {
     }
   }
 
+  // The bigger difference between the caught fish and the player's
+  // previous biggest fish, the more likely it is to escape.
   if (Math.random() * 100 < weight - 50 - biggest) {
     player.canFishDate = now + 30000;
     save(player);
@@ -113,11 +127,11 @@ function gofish(): string {
     return `The one that got away... ${fish} was too big to land!`;
   }
 
+  addFish(player, fish, weight);
+
   let resp = `You caught a ${flair} ${fish} ${flair}! It weighs ${weight} lbs.`;
 
-  player.inventory.push(fish);
-  updateRecord(player, fish, weight);
-
+  // Check for pirate set bonus.
   if (
     player.inventory.includes('🗡️')
     && player.inventory.includes('👑')
@@ -130,15 +144,15 @@ function gofish(): string {
     );
 
     if (eaten.fish !== false && eaten.weight < weight) {
-      player.inventory.push(eaten.fish);
-      updateRecord(player, eaten.fish, eaten.weight);
+      addFish(player, eaten.fish, eaten.weight);
 
       resp += ` And!... ${eaten.fish} (${eaten.weight} lbs) was in its mouth!`;
     }
   }
 
-  resp += (lure.use(weight) ? ' 🎏 broke!💢' : '')
-    + (hook.use(weight) ? ' 🪝 broke!💢' : '')
+  // `min*` being non-zero means gear was found and should be broken.
+  resp += (minRange && breakGear(player.inventory, '🎏', weight) ? ' 🎏 broke!💢' : '')
+    + (minDepth && breakGear(player.inventory, '🪝', weight) ? ' 🪝 broke!💢' : '')
     + (weight > biggest ? ' A new record! 🎉' : '')
     + ' (30m cooldown after a catch)';
 

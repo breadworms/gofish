@@ -58,15 +58,12 @@ function main(playerArgs: string): string {
     }
 
     case 'collection':
-    case 'show': {
+    case 'show':
       if (arg) {
         return printRecord(arg);
       }
 
-      const player = load();
-
-      return `Your collection: ${player.inventory.join(' ')}`;
-    }
+      return `Your collection: ${load().inventory.join(' ')}`;
 
     case 'record': {
       if (arg) {
@@ -89,14 +86,14 @@ function main(playerArgs: string): string {
 
     case 'weather': {
       const player = load();
-      const today = getOcean(new Date())(player);
-      const later = getOcean(new Date(Date.now() + 21600000))(player);
+      const today = getOcean(new Date());
+      const later = getOcean(new Date(Date.now() + 21600000));
 
-      if (today.ambiance === later.ambiance) {
-        return `📺💬 ${today.reports().continuous}`;
+      if (today === later) {
+        return `📺💬 ${today(player).reports().continuous}`;
       }
 
-      return `📺💬 ${today.reports().current} ${later.reports().impending}`;
+      return `📺💬 ${today(player).reports().current} ${later(player).reports().impending}`;
     }
 
     case '?':

@@ -7,7 +7,7 @@ type GameMap = {
     readonly impending: string;
     readonly continuous: string;
   };
-  readonly map: ReadonlyArray<string | false | (() => string | false)>;
+  readonly map: ReadonlyArray<string | (() => string)>;
 };
 
 type GameMapResolver = (player: Player) => GameMap;
