@@ -86,14 +86,14 @@ function main(playerArgs: string): string {
 
     case 'weather': {
       const player = load();
-      const today = getOcean(new Date());
-      const later = getOcean(new Date(Date.now() + 21600000));
+      const today = getOcean(player, new Date());
+      const later = getOcean(player, new Date(Date.now() + 21600000));
 
-      if (today === later) {
-        return `📺💬 ${today(player).reports().continuous}`;
+      if (today.ambiance === later.ambiance) {
+        return `📺💬 ${today.reports().continuous}`;
       }
 
-      return `📺💬 ${today(player).reports().current} ${later(player).reports().impending}`;
+      return `📺💬 ${today.reports().current} ${later.reports().impending}`;
     }
 
     case '?':

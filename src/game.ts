@@ -1,6 +1,6 @@
-function getOcean(date: Date): GameMapResolver {
-  return FORECAST[`${date.getMonth() + 1}.${date.getDate()}:${TIMEOFDAY[date.getHours()]}`]
-    ?? CALM_OCEAN;
+function getOcean(player: Player, date: Date): GameMap {
+  return (FORECAST[`${date.getMonth() + 1}.${date.getDate()}:${TIMEOFDAY[date.getHours()]}`]
+    ?? CALM_OCEAN)(player);
 }
 
 function getFish(ocean: GameMap, range: number, depth: number): { fish: false | string, weight: number } {
@@ -45,9 +45,9 @@ function addFish(player: Player, fish: string, weight: number): void {
   player.inventory.push(fish);
 }
 
-function breakGear(inventory: string[], gear: string, weight: number): boolean {
+function breakGear(player: Player, gear: string, weight: number): boolean {
   if (Math.random() * 100 < weight / 2) {
-    inventory.splice(inventory.indexOf(gear), 1);
+    player.inventory.splice(player.inventory.indexOf(gear), 1);
 
     return true;
   }
@@ -73,7 +73,7 @@ function gofish(): string {
     return `Ready to fish ${utils.timeDelta(player.canFishDate)}`;
   }
 
-  const ocean = getOcean(date)(player);
+  const ocean = getOcean(player, date);
 
   let minRange = 0, maxRange = 10;
   let minDepth = 0, maxDepth = 10;
@@ -151,8 +151,8 @@ function gofish(): string {
   }
 
   // `min*` being non-zero means gear was found and should be broken.
-  resp += (minRange && breakGear(player.inventory, '🎏', weight) ? ' 🎏 broke!💢' : '')
-    + (minDepth && breakGear(player.inventory, '🪝', weight) ? ' 🪝 broke!💢' : '')
+  resp += (minRange && breakGear(player, '🎏', weight) ? ' 🎏 broke!💢' : '')
+    + (minDepth && breakGear(player, '🪝', weight) ? ' 🪝 broke!💢' : '')
     + (weight > biggest ? ' A new record! 🎉' : '')
     + ' (30m cooldown after a catch)';
 
