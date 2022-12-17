@@ -3,8 +3,8 @@ function getOcean(player: Player, date: Date): GameMap {
     ?? CALM_OCEAN)(player);
 }
 
-function getFish(ocean: GameMap, range: number, depth: number): { fish: false | string, weight: number } {
-  const fish = ocean.map[depth * ocean.width + range];
+function getFish(ocean: GameMap, x: number, y: number): { fish: false | string, weight: number } {
+  const fish = ocean.map[y * ocean.width + x];
 
   if (fish === '🟦') {
     return { fish: false, weight: 0.0 };
@@ -12,7 +12,7 @@ function getFish(ocean: GameMap, range: number, depth: number): { fish: false | 
 
   return {
     fish: typeof fish === 'string' ? fish : fish(),
-    weight: Math.round(Math.random() * (range + 1) * (depth + 1) * 100) / 100
+    weight: Math.round(Math.random() * (x + 1) * (y + 1) * 100) / 100
   };
 }
 
