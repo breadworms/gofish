@@ -1,9 +1,11 @@
-type ReelIn = {
+function reelIn(
+  ocean: GameMap,
+  x: number,
+  y: number
+): {
   fish: false | string,
   weight: number
-};
-
-function reelIn(ocean: GameMap, x: number, y: number): ReelIn {
+} {
   const fish = ocean.map[(y - 1) * ocean.width + (x - 1)];
 
   if (fish === '🟦') {
@@ -16,7 +18,7 @@ function reelIn(ocean: GameMap, x: number, y: number): ReelIn {
   };
 }
 
-function random(ocean: GameMap): ReelIn {
+function random(ocean: GameMap) {
   return reelIn(ocean, utils.random(1, ocean.width), utils.random(1, ocean.height));
 }
 

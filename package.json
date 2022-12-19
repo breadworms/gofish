@@ -3,7 +3,7 @@
   "name": "gofish",
   "version": "0.1.0",
   "scripts": {
-    "start": "tsc --watch",
+    "watch": "tsc --watch",
     "build": "tsc && node ./tools/build.mjs"
   },
   "devDependencies": {
