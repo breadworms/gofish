@@ -234,10 +234,10 @@ function release(player: Player, index: number): string {
 
   if (
     bonus.fish !== false &&
-    bonus.weight > 0.4 &&
+    bonus.weight > 1.0 &&
     (
       bonus.fish !== '🎰' ||
-      (bonus.weight >= 10.0 && bonus.weight <= 15.0)
+      (bonus.weight >= 10.0 && bonus.weight <= 12.5)
     )
   ) {
     addFish(player, bonus.fish, bonus.weight);
