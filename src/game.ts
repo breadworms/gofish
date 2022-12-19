@@ -108,7 +108,7 @@ function play(): string {
       minRange = 1;
       minDepth = 1;
       maxRange = ocean.width;
-      maxDepth = 1;
+      maxDepth = ocean.height;
 
       slot.biggestWeight -= 1;
 
@@ -185,8 +185,8 @@ function play(): string {
     + (minDepth > 1 && breakGear(player, '🪝', weight) ? ' 🪝 broke!💢' : '')
     + (weight > biggest ? ' A new record! 🎉' : '');
 
-  // 1 height is slot machine, skip cooldown.
-  if (ocean.height === 1) {
+  // 8 height is slot machine, skip cooldown.
+  if (ocean.height === 8) {
     player.canFishDate = now + 30000;
   } else {
     player.canFishDate = now + 1800000;
@@ -234,6 +234,7 @@ function release(player: Player, index: number): string {
 
   if (
     bonus.fish !== false &&
+    bonus.weight > 0.4 &&
     (
       bonus.fish !== '🎰' ||
       (bonus.weight >= 10.0 && bonus.weight <= 15.0)
