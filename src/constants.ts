@@ -7,7 +7,7 @@ type GameMap = {
     readonly impending: string;
     readonly continuous: string;
   };
-  readonly map: ReadonlyArray<string | false | (() => string | false)>;
+  readonly map: ReadonlyArray<string | (() => string)>;
 };
 
 type GameMapResolver = (player: Player) => GameMap;
@@ -366,6 +366,27 @@ const ALIEN_SHIP: GameMapResolver = () => ({
     continuous: ``
   }),
   map: []
+});
+
+const SLOT_MACHINE: GameMapResolver = () => ({
+  width: 5,
+  height: 8,
+  ambiance: `🎰 One more spin...`,
+  reports: () => ({
+    current: ``,
+    impending: ``,
+    continuous: ``
+  }),
+  map: [
+    '🟦', '🍬', '🪝', '🟦', '🟦',
+    '🟦', '🟦', '🟦', '🟦', '🟦',
+    '🎏', '🟦', '🟦', '🟦', '🟦',
+    '🟦', '🟦', '🟦', '🟦', '🟦',
+    '🟦', '🟦', '🟦', '🟦', '🎰',
+    '🟦', '🟦', '🟦', '🟦', '🟦',
+    '🟦', '🟦', '🟦', '🟦', '🟦',
+    '🟦', '🟦', '🟦', '🟦', '🟦'
+  ]
 });
 
 const TIMEOFDAY: readonly string[] = [
