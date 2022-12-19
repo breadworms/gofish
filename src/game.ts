@@ -78,11 +78,11 @@ function play(): string {
   }
 
   if (player.inventory.length >= 100) {
-    //return `Inventory full 🎒🗯️! Release some fish with \`release\` to continue! Records won't get removed.`;
+    return `Inventory full 🎒🗯️! Release some fish with \`release\` to continue! Records won't get removed.`;
   }
 
   if (player.canFishDate - now > 0) {
-    //return `Ready to fish ${utils.timeDelta(player.canFishDate)}`;
+    return `Ready to fish ${utils.timeDelta(player.canFishDate)}`;
   }
 
   let ocean = getOcean(player, date);
@@ -232,7 +232,13 @@ function release(player: Player, index: number): string {
 
   const bonus = random(SLOT_MACHINE(player));
 
-  if (bonus.fish !== false && (bonus.fish !== '🎰' || bonus.weight > 15)) {
+  if (
+    bonus.fish !== false &&
+    (
+      bonus.fish !== '🎰' ||
+      (bonus.weight >= 10.0 && bonus.weight <= 15.0)
+    )
+  ) {
     addFish(player, bonus.fish, bonus.weight);
     resp += ` Huh? ✨ Something is glittering in the ocean... It's a ${bonus.fish}!`;
   }
