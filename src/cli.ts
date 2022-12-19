@@ -14,6 +14,12 @@ function printRecord(fish: string): string {
     case '🪝':
       return `A heavy hook. Allows for fishing in the depths of the ocean. Used automatically.`;
 
+    case '🍬':
+      return `A delicious candy. Packed with sugar, eating it makes one ready for anything. Release to use.`;
+
+    case '🎰':
+      return `A one-armed bandit. You can't resist spinning it. It has ${Math.ceil(record.biggestWeight)} spins left.`;
+
     case '🗡️':
       return `Davy Joneseg's dagger. Being you found it lodged in the remains of his ribcage suggests he was done in by his own dagger.`;
 
@@ -51,10 +57,7 @@ function main(playerArgs: string): string {
         return `No fish to release... (No ${arg} found in inventory)`;
       }
 
-      player.inventory.splice(index, 1);
-      save(player);
-
-      return `Bye bye ${arg}! 🫳🌊`;
+      return release(player, index);
     }
 
     case 'collection':
@@ -114,6 +117,6 @@ function main(playerArgs: string): string {
       return `This will reset all of your data, including *history, records and collection*. Use \`deleteeverything yes\` if you wish to proceed.`;
 
     default:
-      return gofish();
+      return play();
   }
 }

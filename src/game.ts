@@ -1,10 +1,10 @@
-function getOcean(player: Player, date: Date): GameMap {
-  return (FORECAST[`${date.getMonth() + 1}.${date.getDate()}:${TIMEOFDAY[date.getHours()]}`]
-    ?? CALM_OCEAN)(player);
-}
+type ReelIn = {
+  fish: false | string,
+  weight: number
+};
 
-function getFish(ocean: GameMap, x: number, y: number): { fish: false | string, weight: number } {
-  const fish = ocean.map[y * ocean.width + x];
+function reelIn(ocean: GameMap, x: number, y: number): ReelIn {
+  const fish = ocean.map[(y - 1) * ocean.width + (x - 1)];
 
   if (fish === '🟦') {
     return { fish: false, weight: 0.0 };
@@ -12,8 +12,17 @@ function getFish(ocean: GameMap, x: number, y: number): { fish: false | string, 
 
   return {
     fish: typeof fish === 'string' ? fish : fish(),
-    weight: Math.round(Math.random() * (x + 1) * (y + 1) * 100) / 100
+    weight: Math.round(Math.random() * x * y * 100) / 100
   };
+}
+
+function random(ocean: GameMap): ReelIn {
+  return reelIn(ocean, utils.random(1, ocean.width), utils.random(1, ocean.height));
+}
+
+function getOcean(player: Player, date: Date): GameMap {
+  return (FORECAST[`${date.getMonth() + 1}.${date.getDate()}:${TIMEOFDAY[date.getHours()]}`]
+    ?? CALM_OCEAN)(player);
 }
 
 function addFish(player: Player, fish: string, weight: number): void {
@@ -27,6 +36,7 @@ function addFish(player: Player, fish: string, weight: number): void {
       biggestWeight: weight,
       biggestDate: Date.now()
     });
+
   } else {
     if (weight < record.smallestWeight) {
       record.smallestWeight = weight;
@@ -55,7 +65,7 @@ function breakGear(player: Player, gear: string, weight: number): boolean {
   return false;
 }
 
-function gofish(): string {
+function play(): string {
   const player = load();
   const date = new Date();
   const now = date.getTime();
@@ -65,35 +75,59 @@ function gofish(): string {
     save(player);
 
     return `You caught a 🗞🍾 message in a bottle! 📃 "Welcome to GO FISH GAME! Use \`help\` if you need more information. Let's go fish! -Swormbeard"`;
-  } else if (player.inventory.length >= 200) {
-    return `Inventory full 🎒🗯️! Release some fish with \`release\` to continue! Records won't get removed.`;
+  }
+
+  if (player.inventory.length >= 100) {
+    //return `Inventory full 🎒🗯️! Release some fish with \`release\` to continue! Records won't get removed.`;
   }
 
   if (player.canFishDate - now > 0) {
-    return `Ready to fish ${utils.timeDelta(player.canFishDate)}`;
+    //return `Ready to fish ${utils.timeDelta(player.canFishDate)}`;
   }
 
-  const ocean = getOcean(player, date);
+  let ocean = getOcean(player, date);
 
-  let minRange = 0, maxRange = 10;
-  let minDepth = 0, maxDepth = 10;
+  let minRange = 1, maxRange = 10;
+  let minDepth = 1, maxDepth = 10;
 
   // Go through player inventory, checking for lures, hooks and
   // slot machines.
   for (let i = player.inventory.length - 1; i > -1; i--) {
-    if (player.inventory[i] === '🎏') {
-      maxRange = ocean.width - 1;
+    if (player.inventory[i] === '🎰') {
+      // Will never be undefined, should throw error if.
+      const slot = player.history.find(r => r.fish === '🎰') as PlayerRecord;
+
+      // A slot machine's biggest weight are the spins remaining.
+      if (slot.biggestWeight <= 0) {
+        player.inventory.splice(i, 1);
+
+        continue;
+      }
+
+      ocean = SLOT_MACHINE(player);
       minRange = 1;
-    } else if (player.inventory[i] === '🪝') {
-      maxDepth = ocean.height - 1;
       minDepth = 1;
+      maxRange = ocean.width;
+      maxDepth = 1;
+
+      slot.biggestWeight -= 1;
+
+      break;
+
+    } else if (player.inventory[i] === '🎏') {
+      minRange = 2;
+      maxRange = ocean.width;
+
+    } else if (player.inventory[i] === '🪝') {
+      minDepth = 2;
+      maxDepth = ocean.height;
     }
   }
 
-  const { fish, weight } = getFish(
+  const { fish, weight } = reelIn(
     ocean,
-    Math.floor(Math.random() * maxRange) + minRange,
-    Math.floor(Math.random() * maxDepth) + minDepth
+    utils.random(minRange, maxRange),
+    utils.random(minDepth, maxDepth)
   );
 
   if (fish === false) {
@@ -107,7 +141,7 @@ function gofish(): string {
   let flair = '🫧';
 
   // Go through player history, checking for previous biggest fish and
-  // if it's a new type of fish.
+  // if this fish has been caught before.
   for (const record of player.history) {
     if (record.biggestWeight > biggest) {
       biggest = record.biggestWeight;
@@ -118,8 +152,8 @@ function gofish(): string {
     }
   }
 
-  // The bigger difference between the caught fish and the player's
-  // previous biggest fish, the more likely it is to escape.
+  // The bigger difference between this fish and the player's
+  // biggest fish, the more likely it is to escape.
   if (Math.random() * 100 < weight - 50 - biggest) {
     player.canFishDate = now + 30000;
     save(player);
@@ -137,11 +171,7 @@ function gofish(): string {
     && player.inventory.includes('👑')
     && player.inventory.includes('🧭')
   ) {
-    const eaten = getFish(
-      ocean,
-      Math.floor(Math.random() * ocean.width),
-      Math.floor(Math.random() * ocean.height)
-    );
+    const eaten = random(ocean);
 
     if (eaten.fish !== false && eaten.weight < weight) {
       addFish(player, eaten.fish, eaten.weight);
@@ -150,13 +180,63 @@ function gofish(): string {
     }
   }
 
-  // `min*` being non-zero means gear was found and should be broken.
-  resp += (minRange && breakGear(player, '🎏', weight) ? ' 🎏 broke!💢' : '')
-    + (minDepth && breakGear(player, '🪝', weight) ? ' 🪝 broke!💢' : '')
-    + (weight > biggest ? ' A new record! 🎉' : '')
-    + ' (30m cooldown after a catch)';
+  // `min*` being more than 1 means gear was found and should be broken.
+  resp += (minRange > 1 && breakGear(player, '🎏', weight) ? ' 🎏 broke!💢' : '')
+    + (minDepth > 1 && breakGear(player, '🪝', weight) ? ' 🪝 broke!💢' : '')
+    + (weight > biggest ? ' A new record! 🎉' : '');
 
-  player.canFishDate = now + 1800000;
+  // 1 height is slot machine, skip cooldown.
+  if (ocean.height === 1) {
+    player.canFishDate = now + 30000;
+  } else {
+    player.canFishDate = now + 1800000;
+    resp += ' (30m cooldown after a catch)';
+  }
+
+  save(player);
+
+  return resp;
+}
+
+function release(player: Player, index: number): string {
+  const fish = player.inventory[index];
+
+  player.inventory.splice(index, 1);
+
+  if (fish === '🍬') {
+    let resp = `Delicious! 🫳🗑️`;
+
+    const bonus = random(getOcean(player, new Date()));
+
+    if (bonus.fish !== false) {
+      const previous = player.history.find(r => r.fish === bonus.fish);
+
+      if (previous !== undefined) {
+        const weight = Math.round((previous.biggestWeight + bonus.weight * 0.01) * 100) / 100 + 1.0;
+
+        addFish(player, bonus.fish, weight);
+
+        resp = `Huh?! ✨ Something jumped out of the water to snatch your delicious candy! ...Got it! 🥍 ${bonus.fish} ${weight} lbs!`;
+      }
+    }
+
+    player.canFishDate = Date.now();
+    save(player);
+
+    return resp;
+  }
+
+  // TODO: Add exceptions for releasing djinn and mermaids.
+
+  let resp = `Bye bye ${fish}! 🫳🌊`;
+
+  const bonus = random(SLOT_MACHINE(player));
+
+  if (bonus.fish !== false && (bonus.fish !== '🎰' || bonus.weight > 15)) {
+    addFish(player, bonus.fish, bonus.weight);
+    resp += ` Huh? ✨ Something is glittering in the ocean... It's a ${bonus.fish}!`;
+  }
+
   save(player);
 
   return resp;
