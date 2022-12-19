@@ -81,7 +81,7 @@ function main(playerArgs: string): string {
 
       const record = player.history.reduce((a, b) => a.biggestWeight > b.biggestWeight ? a : b);
 
-      return `${record.fish} ${record.biggestWeight} lbs! Wow! 📸 Overall, you've caught ${player.lifetime} fish weighing at ${Math.round(player.lifetimeWeight * 100) / 100} lbs.`;
+      return `${record.fish} ${record.biggestWeight} lbs! Wow! 📸 Overall, you've caught ${player.lifetime} fish weighing at ${Math.round(player.lifetimeWeight * 100) / 100} lbs. You've seen ${player.history.length}/61 types of fish.`;
     }
 
     case 'treasure':
@@ -93,10 +93,10 @@ function main(playerArgs: string): string {
       const later = getOcean(player, new Date(Date.now() + 21600000));
 
       if (today.ambiance === later.ambiance) {
-        return `📺💬 ${today.reports().continuous}`;
+        return `${today.reports().continuous}`;
       }
 
-      return `📺💬 ${today.reports().current} ${later.reports().impending}`;
+      return `${today.reports().current} ${later.reports().impending}`;
     }
 
     case '?':

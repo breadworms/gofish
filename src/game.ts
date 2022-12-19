@@ -243,7 +243,7 @@ function release(player: Player, index: number): string {
     )
   ) {
     addFish(player, bonus.fish, bonus.weight);
-    resp += ` Huh? ✨ Something is glittering in the ocean... It's a ${bonus.fish}!`;
+    resp += ` ...Huh? ✨ Something is glimmering in the ocean... 🥍${bonus.fish} Got it!`;
   }
 
   save(player);

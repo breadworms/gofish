@@ -17,9 +17,9 @@ const CALM_OCEAN: GameMapResolver = p => ({
   height: 20,
   ambiance: `☁️ Nothing...`,
   reports: () => ({
-    current: `It's an ordinary day folks!`,
+    current: `📺💬 It's an ordinary day folks!`,
     impending: `Later, the weather will be calming down.`,
-    continuous: `It's an ordinary day folks! No precipitation ahead.`
+    continuous: `📺💬 It's an ordinary day folks! No precipitation ahead.`
   }),
   map: [
     // 1    2      3     4      5     6      7     8      9     10     11    12    13     14    15     16    17     18    19     20
@@ -51,9 +51,9 @@ const RAINY_OCEAN: GameMapResolver = p => ({
   height: 20,
   ambiance: `🌧 It rains...`,
   reports: () => ({
-    current: `It's a rainy day folks, bring an umbrella!`,
-    impending: `But don't make any big plans, there are rain clouds ahead and they're up to no good!`,
-    continuous: `Rain rain rain ahead folks!`
+    current: `📺💬 It's a rainy day folks, bring an umbrella!`,
+    impending: `Don't make any big plans, there are rain clouds ahead and they're up to no good!`,
+    continuous: `📺💬 Rain rain rain ahead folks!`
   }),
   map: [
     // 1    2      3     4      5     6      7     8      9     10     11    12    13     14    15     16    17     18    19     20
@@ -85,9 +85,9 @@ const WINDY_OCEAN: GameMapResolver = () => ({
   height: 20,
   ambiance: `🎐 The wind...`,
   reports: () => ({
-    current: `Hold onto your hats folks! We are experiencing heavy winds.`,
+    current: `📺💬 Hold onto your hats folks! We are experiencing heavy winds.`,
     impending: `Bring a jacket folks, it's going to get windy later!`,
-    continuous: `Hold onto your hats folks! There is no sign of this wind calming down.`
+    continuous: `📺💬 Hold onto your hats folks! There are no signs of this wind calming down.`
   }),
   map: [
     // 1    2      3     4      5     6      7     8      9     10     11    12    13     14    15     16    17     18    19     20
@@ -119,9 +119,9 @@ const FOGGY_OCEAN: GameMapResolver = () => ({
   height: 20,
   ambiance: `🌫️ So misty...`,
   reports: () => ({
-    current: `I've gone blind folks! Help! Oh, that's just the mist.`,
+    current: `📺💬 I've gone blind folks! Help! Oh, that's just the mist.`,
     impending: `Expect fog after.`,
-    continuous: `Heavy fog all day folks!`
+    continuous: `📺💬 Heavy fog all day folks!`
   }),
   map: [
     // 1    2      3     4      5     6      7     8      9     10     11    12    13     14    15     16    17     18    19     20
@@ -153,9 +153,9 @@ const COLD_OCEAN: GameMapResolver = () => ({
   height: 20,
   ambiance: `❄️ It's freezing...`,
   reports: () => ({
-    current: `Brrrr, is it cold out folks! Bring a coat, or two!`,
-    impending: `But bring a coat folks, it's gonna get well below freezing!`,
-    continuous: `Brrrr, this cold ain't going away folks! Bring a coat, or two!`
+    current: `📺💬 Brrrr, is it cold out folks! Bring a coat, or two!`,
+    impending: `Bring a coat folks, it's gonna get below freezing later!`,
+    continuous: `📺💬 Brrrr, this cold ain't going away folks! Bring a coat, or two!`
   }),
   map: [
     // 1    2      3     4      5     6      7     8      9     10     11    12    13     14    15     16    17     18    19     20
@@ -187,9 +187,9 @@ const ICE_FISHING: GameMapResolver = p => ({
   height: 40,
   ambiance: `🌨 It's cold...`,
   reports: () => ({
-    current: `Let it snow folks!`,
-    impending: `Later, it's going to snow snow snow!`,
-    continuous: `Let it snow folks! Bring a coat and a pair of ice skates!`
+    current: `📺💬 Let it snow folks!`,
+    impending: `After that we've got some clouds coming in and it's gonna snow snow snow!`,
+    continuous: `📺💬 Let it snow folks! Bring a coat and a pair of ice skates!`
   }),
   map: [
     // 1    2      3     4      5     6      7     8      9     10    11
