@@ -16,33 +16,17 @@ type Player = {
   canFishDate: ECMAScriptTimestamp;
 };
 
-function save(player: Player): void {
+function save(player: Player | null): void {
   customData.set('gofishgame', player as Player & { [key: string]: any });
 }
 
 function load(): Player {
-  const player = Object.assign(
+  return Object.assign(
     { inventory: [], history: [], lifetime: 0, lifetimeWeight: 0.0, canFishDate: 0 },
     customData.get('gofishgame')
   );
-
-  if (player.canFishDate < 1670887583316 && player.canFishDate > 0) {
-    migrate(player);
-  }
-
-  return player;
 }
 
-function migrate(player: Player) {
-  const reset = ['🗡️', '🦂', '🦭', '🐧', '🧭', '👑', '🧜‍♀️'];
-
-  player.history = player.history.filter(
-    record => !reset.includes(record.fish)
-  );
-
-  player.inventory = player.inventory.filter(
-    fish => !reset.includes(fish)
-  );
-
-  player.canFishDate = Date.now();
+function find(player: Player, fish: string) {
+  return player.history.find(r => r.fish === fish);
 }

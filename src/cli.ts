@@ -15,10 +15,10 @@ function printRecord(fish: string): string {
       return `A heavy hook. Allows for fishing in the depths of the ocean. Used automatically.`;
 
     case '🍬':
-      return `A delicious candy. Packed with sugar, eating it makes one ready for anything. Release to use.`;
+      return `A delicious candy. Packed with sugar, eating a piece makes one ready for anything. Release to use.`;
 
     case '🎰':
-      return `A one-armed bandit. You can't resist spinning it. It has ${Math.ceil(record.biggestWeight)} spins left.`;
+      return `A one-armed bandit. You can't resist its allure. It has ${Math.ceil(record.biggestWeight)} spins left.`;
 
     case '🗡️':
       return `Davy Joneseg's dagger. Being you found it lodged in the remains of his ribcage suggests he was done in by his own dagger.`;
@@ -89,8 +89,8 @@ function main(playerArgs: string): string {
 
     case 'weather': {
       const player = load();
-      const today = getOcean(player, new Date());
-      const later = getOcean(player, new Date(Date.now() + 21600000));
+      const today = forecast(player, new Date());
+      const later = forecast(player, new Date(Date.now() + 21600000));
 
       if (today.ambiance === later.ambiance) {
         return `${today.reports().continuous}`;
@@ -105,11 +105,11 @@ function main(playerArgs: string): string {
         return printRecord(arg);
       }
 
-      return `Commands: \`? <fish>\`, \`release <fish>\`, \`record\`, \`collection\`, \`treasure\`, \`deleteeverything\`.`;
+      return `Commands: \`? <fish>\`, \`release <fish>\`, \`record\`, \`collection\`, \`weather\`, \`treasure\`, \`deleteeverything\`.`;
 
     case 'deleteeverything':
       if (arg === 'yes') {
-        customData.set('gofishgame', null as any);
+        save(null);
 
         return `All data was wiped!`;
       }

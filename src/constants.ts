@@ -1,4 +1,4 @@
-type GameMap = {
+type Ocean = {
   readonly width: number;
   readonly height: number;
   readonly ambiance: string;
@@ -10,9 +10,9 @@ type GameMap = {
   readonly map: ReadonlyArray<string | (() => string)>;
 };
 
-type GameMapResolver = (player: Player) => GameMap;
+type OceanResolver = (player: Player) => Ocean;
 
-const CALM_OCEAN: GameMapResolver = p => ({
+const CALM_OCEAN: OceanResolver = p => ({
   width: 20,
   height: 20,
   ambiance: `☁️ Nothing...`,
@@ -46,7 +46,7 @@ const CALM_OCEAN: GameMapResolver = p => ({
   ]
 });
 
-const RAINY_OCEAN: GameMapResolver = p => ({
+const RAINY_OCEAN: OceanResolver = p => ({
   width: 20,
   height: 20,
   ambiance: `🌧 It rains...`,
@@ -80,7 +80,7 @@ const RAINY_OCEAN: GameMapResolver = p => ({
   ]
 });
 
-const WINDY_OCEAN: GameMapResolver = () => ({
+const WINDY_OCEAN: OceanResolver = () => ({
   width: 20,
   height: 20,
   ambiance: `🎐 The wind...`,
@@ -114,7 +114,7 @@ const WINDY_OCEAN: GameMapResolver = () => ({
   ]
 });
 
-const FOGGY_OCEAN: GameMapResolver = () => ({
+const FOGGY_OCEAN: OceanResolver = () => ({
   width: 20,
   height: 20,
   ambiance: `🌫️ So misty...`,
@@ -148,7 +148,7 @@ const FOGGY_OCEAN: GameMapResolver = () => ({
   ]
 });
 
-const COLD_OCEAN: GameMapResolver = () => ({
+const COLD_OCEAN: OceanResolver = () => ({
   width: 20,
   height: 20,
   ambiance: `❄️ It's freezing...`,
@@ -182,7 +182,7 @@ const COLD_OCEAN: GameMapResolver = () => ({
   ]
 });
 
-const ICE_FISHING: GameMapResolver = p => ({
+const ICE_FISHING: OceanResolver = p => ({
   width: 11,
   height: 40,
   ambiance: `🌨 It's cold...`,
@@ -236,7 +236,7 @@ const ICE_FISHING: GameMapResolver = p => ({
   ]
 });
 
-const DRY_LAKE: GameMapResolver = () => ({
+const DRY_LAKE: OceanResolver = () => ({
   width: 40,
   height: 10,
   ambiance: `☀️ It's so hot...`,
@@ -248,7 +248,7 @@ const DRY_LAKE: GameMapResolver = () => ({
   map: []
 });
 
-const SPRING_POND: GameMapResolver = () => ({
+const SPRING_POND: OceanResolver = () => ({
   width: 40,
   height: 10,
   ambiance: `🌱🪧 Nothing...`,
@@ -260,7 +260,7 @@ const SPRING_POND: GameMapResolver = () => ({
   map: []
 });
 
-const SUMMER_POND: GameMapResolver = () => ({
+const SUMMER_POND: OceanResolver = () => ({
   width: 40,
   height: 10,
   ambiance: `🌳🪧 Nothing...`,
@@ -272,7 +272,7 @@ const SUMMER_POND: GameMapResolver = () => ({
   map: []
 });
 
-const AUTUMN_POND: GameMapResolver = () => ({
+const AUTUMN_POND: OceanResolver = () => ({
   width: 20,
   height: 20,
   ambiance: `🍂🪧 Nothing...`,
@@ -284,7 +284,7 @@ const AUTUMN_POND: GameMapResolver = () => ({
   map: []
 });
 
-const WINTER_POND: GameMapResolver = () => ({
+const WINTER_POND: OceanResolver = () => ({
   width: 20,
   height: 20,
   ambiance: `🌲🪧 Nothing...`,
@@ -296,7 +296,7 @@ const WINTER_POND: GameMapResolver = () => ({
   map: []
 });
 
-const TYPHOON: GameMapResolver = () => ({
+const TYPHOON: OceanResolver = () => ({
   width: 25,
   height: 16,
   ambiance: `🌪️ Eye of the storm...`,
@@ -308,7 +308,7 @@ const TYPHOON: GameMapResolver = () => ({
   map: []
 });
 
-const THUNDERSTORM: GameMapResolver = () => ({
+const THUNDERSTORM: OceanResolver = () => ({
   width: 16,
   height: 25,
   ambiance: `⛈️ A thunderstorm rages on...`,
@@ -320,7 +320,7 @@ const THUNDERSTORM: GameMapResolver = () => ({
   map: []
 });
 
-const BUGHUNT: GameMapResolver = () => ({
+const BUGHUNT: OceanResolver = () => ({
   width: 11,
   height: 11,
   ambiance: `🏜️ No fish to be found...`,
@@ -332,7 +332,7 @@ const BUGHUNT: GameMapResolver = () => ({
   map: []
 });
 
-const GHOST_SHIP: GameMapResolver = () => ({
+const GHOST_SHIP: OceanResolver = () => ({
   width: 11,
   height: 11,
   ambiance: `🏴‍☠️ Washed away... But where?`,
@@ -344,7 +344,7 @@ const GHOST_SHIP: GameMapResolver = () => ({
   map: []
 });
 
-const DESERT_ISLAND: GameMapResolver = () => ({
+const DESERT_ISLAND: OceanResolver = () => ({
   width: 11,
   height: 11,
   ambiance: `🏝️ Washed away...`,
@@ -356,7 +356,7 @@ const DESERT_ISLAND: GameMapResolver = () => ({
   map: []
 });
 
-const ALIEN_SHIP: GameMapResolver = () => ({
+const ALIEN_SHIP: OceanResolver = () => ({
   width: 11,
   height: 11,
   ambiance: `🛸 ???`,
@@ -368,7 +368,7 @@ const ALIEN_SHIP: GameMapResolver = () => ({
   map: []
 });
 
-const SLOT_MACHINE: GameMapResolver = () => ({
+const SLOT_MACHINE: OceanResolver = () => ({
   width: 5,
   height: 8,
   ambiance: `🎰 One more spin...`,
@@ -396,7 +396,7 @@ const TIMEOFDAY: readonly string[] = [
   'e', 'e', 'e', 'e', 'e', 'e'
 ];
 
-const FORECAST: { readonly [date: string]: GameMapResolver } = {
+const FORECAST: { readonly [date: string]: OceanResolver } = {
   '12.13:n': RAINY_OCEAN, '12.13:m': WINDY_OCEAN,
   '12.14:n': RAINY_OCEAN,
   '12.15:e': WINDY_OCEAN,
