@@ -207,7 +207,7 @@ function release(player: Player, index: number): string {
   player.inventory.splice(index, 1);
 
   if (fish === '🍬') {
-    resp = `Delicious! 🫳🗑️`;
+    resp = `Delicious! 🫴👄`;
     player.canFishDate = Date.now();
 
     const thief = random(forecast(player, new Date()));
