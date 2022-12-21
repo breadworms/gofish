@@ -397,9 +397,5 @@ const TIMEOFDAY: readonly string[] = [
 ];
 
 const FORECAST: { readonly [date: string]: OceanResolver } = {
-  '12.13:n': RAINY_OCEAN, '12.13:m': WINDY_OCEAN,
-  '12.14:n': RAINY_OCEAN,
-  '12.15:e': WINDY_OCEAN,
-  '12.19:n': COLD_OCEAN, '12.19:m': COLD_OCEAN, '12.19:a': ICE_FISHING, '12.19:e': COLD_OCEAN,
-  '12.20:n': COLD_OCEAN, '12.20:m': ICE_FISHING, '12.20:a': COLD_OCEAN, '12.20:e': COLD_OCEAN
+  '12.20:m': ICE_FISHING
 };

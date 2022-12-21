@@ -24,7 +24,7 @@ function random(ocean: Ocean) {
 
 function forecast(player: Player, date: Date): Ocean {
   return (FORECAST[`${date.getMonth() + 1}.${date.getDate()}:${TIMEOFDAY[date.getHours()]}`]
-    ?? CALM_OCEAN)(player);
+    ?? COLD_OCEAN)(player);
 }
 
 function add(player: Player, fish: string, weight: number): void {
@@ -225,6 +225,11 @@ function release(player: Player, index: number): string {
       }
     }
 
+  } else if (fish === '🧜‍♀️' || fish === '🧞‍♂️') {
+    // Temporary, these will have functionality later so don't make
+    // players waste it by releasing.
+    return `Huh? ${fish} won't budge!`;
+
   } else {
     resp = `Bye bye ${fish}! 🫳🌊`;
 
@@ -241,7 +246,7 @@ function release(player: Player, index: number): string {
       )
     ) {
       add(player, glimmer.fish, glimmer.weight);
-      resp += ` ...Huh? ✨ Something is glimmering in the ocean... 🥍 ${glimmer.fish} Got it!`;
+      resp += ` ...Huh? ✨ Something is sparkling in the ocean... 🥍 ${glimmer.fish} Got it!`;
     }
   }
 
