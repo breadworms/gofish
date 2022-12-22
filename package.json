@@ -4,10 +4,14 @@
   "version": "0.1.0",
   "scripts": {
     "watch": "tsc --watch",
-    "build": "tsc && node ./tools/build.mjs"
+    "build": "tsc && node ./tools/build.mjs",
+    "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
-    "supibot-package-manager": "github:supinic/supibot-package-manager",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
+    "eslint": "^8.30.0",
+    "supi-core": "github:supinic/supi-core",
     "typescript": "^4.9.3",
     "uglify-js": "^3.17.4"
   }

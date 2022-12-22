@@ -24,7 +24,7 @@ function random(ocean: Ocean) {
 
 function forecast(player: Player, date: Date): Ocean {
   return (FORECAST[`${date.getMonth() + 1}.${date.getDate()}:${TIMEOFDAY[date.getHours()]}`]
-    ?? COLD_OCEAN)(player);
+    ?? CALM_OCEAN)(player);
 }
 
 function add(player: Player, fish: string, weight: number): void {

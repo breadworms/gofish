@@ -1,4 +1,4 @@
-type Ocean = {
+interface Ocean {
   readonly width: number;
   readonly height: number;
   readonly ambiance: string;
@@ -7,12 +7,12 @@ type Ocean = {
     readonly impending: string;
     readonly continuous: string;
   };
-  readonly map: ReadonlyArray<string | (() => string)>;
-};
+  readonly map: readonly (string | (() => string))[];
+}
 
 type OceanResolver = (player: Player) => Ocean;
 
-const CALM_OCEAN: OceanResolver = p => ({
+const CALM_OCEAN: OceanResolver = (p) => ({
   width: 20,
   height: 20,
   ambiance: `☁️ Nothing...`,
@@ -46,7 +46,7 @@ const CALM_OCEAN: OceanResolver = p => ({
   ]
 });
 
-const RAINY_OCEAN: OceanResolver = p => ({
+const RAINY_OCEAN: OceanResolver = (p) => ({
   width: 20,
   height: 20,
   ambiance: `🌧 It rains...`,
@@ -182,7 +182,7 @@ const COLD_OCEAN: OceanResolver = () => ({
   ]
 });
 
-const ICE_FISHING: OceanResolver = p => ({
+const ICE_FISHING: OceanResolver = (p) => ({
   width: 11,
   height: 40,
   ambiance: `🌨 It's cold...`,
@@ -396,6 +396,8 @@ const TIMEOFDAY: readonly string[] = [
   'e', 'e', 'e', 'e', 'e', 'e'
 ];
 
-const FORECAST: { readonly [date: string]: OceanResolver } = {
-  '12.20:m': ICE_FISHING
+const FORECAST: Readonly<Record<string, OceanResolver | undefined>> = {
+  '12.20:m': ICE_FISHING,
+  '12.21:e': ICE_FISHING,
+  '12.22:n': ICE_FISHING
 };
