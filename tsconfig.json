@@ -1,7 +1,6 @@
 {
   "files": [
     "./sandbox.d.ts",
-    "./src/utils.ts",
     "./src/game.ts",
     "./src/cli.ts",
     "./src/player.ts",
