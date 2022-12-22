@@ -1,7 +1,5 @@
 function printRecord(fish: string): string {
-  const record = load().history.find(
-    r => r.fish.replace('\ufe0f', '') === fish.replace(/[\s\ufe0f]/g, '')
-  );
+  const record = load().history.find(r => compareSanitized(r.fish, fish));
 
   if (record === undefined) {
     return `You've never caught a ${fish}!`;
@@ -30,8 +28,7 @@ function printRecord(fish: string): string {
       return `Davy Joneseg's magic compass. No one knows where or what it points to, but it sure seems to go crazy around chicken farms!`;
 
     default:
-      return `Caught ${(new Date(record.biggestDate)).toDateString()}: ${record.fish} ${record.biggestWeight} lbs.`
-        + ` Caught ${(new Date(record.smallestDate)).toDateString()}: ${record.fish} ${record.smallestWeight} lbs.`;
+      return `Caught ${(new Date(record.biggestDate)).toDateString()}: ${record.fish} ${record.biggestWeight} lbs. Caught ${(new Date(record.smallestDate)).toDateString()}: ${record.fish} ${record.smallestWeight} lbs.`;
   }
 }
 
@@ -49,9 +46,7 @@ function main(playerArgs: string): string {
       }
 
       const player = load();
-      const index = player.inventory.findLastIndex(
-        fish => fish.replace('\ufe0f', '') === arg.replace('\ufe0f', '')
-      );
+      const index = player.inventory.findLastIndex(fish => compareSanitized(fish, arg));
 
       if (index === -1) {
         return `No fish to release... (No ${arg} found in inventory)`;

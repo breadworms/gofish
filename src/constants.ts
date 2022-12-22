@@ -399,5 +399,7 @@ const TIMEOFDAY: readonly string[] = [
 const FORECAST: Readonly<Record<string, OceanResolver | undefined>> = {
   '12.20:m': ICE_FISHING,
   '12.21:e': ICE_FISHING,
-  '12.22:n': ICE_FISHING
+  '12.22:n': ICE_FISHING,
+  '12.22:e': COLD_OCEAN,
+  '12.23:n': COLD_OCEAN
 };
