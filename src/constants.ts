@@ -3,7 +3,7 @@ interface Ocean {
   readonly height: number;
   readonly ambiance: string;
   readonly reports: () => {
-    readonly current: string;
+    readonly current?: string;
     readonly impending: string;
     readonly continuous: string;
   };
@@ -285,15 +285,27 @@ const AUTUMN_POND: OceanResolver = () => ({
 });
 
 const WINTER_POND: OceanResolver = () => ({
-  width: 20,
-  height: 20,
-  ambiance: `🌲🪧 Nothing...`,
+  width: 11,
+  height: 11,
+  ambiance: `🌲🪧 Peaceful...`,
   reports: () => ({
-    current: ``,
-    impending: ``,
-    continuous: ``
+    impending: `I'm signing off folks, tomorrow is my day off! I know I'll be spending my day at Acorn Pond and I'll be bringing my skates!`,
+    continuous: `🙎 Oh, hello. Sonny Day here with the weather! Actually, this is my day off. But it is nice out.`
   }),
-  map: []
+  map: [
+    // 1    2      3     4      5     6      7     8      9     10    11
+    '🌿', '🟦', '🐸', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🪵', '🟦', // 1
+    '🐌', '🐚', '🐟', '🟦', '🐍', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', // 2
+    '🟦', '🦐', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', // 3
+    '🟦', '🟦', '🟦', '🐟', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🦫', // 4
+    '🟦', '🟦', '🟦', '🟦', '🐢', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', // 5
+    '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', // 6
+    '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', // 7
+    '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', // 8
+    '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', // 9
+    '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', // 10
+    '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦' // 11
+  ]
 });
 
 const TYPHOON: OceanResolver = () => ({
@@ -373,9 +385,8 @@ const SLOT_MACHINE: OceanResolver = () => ({
   height: 8,
   ambiance: `🎰 One more spin...`,
   reports: () => ({
-    current: ``,
-    impending: ``,
-    continuous: ``
+    impending: '',
+    continuous: ''
   }),
   map: [
     '🟦', '🍬', '🪝', '🟦', '🟦',
@@ -399,5 +410,14 @@ const TIMEOFDAY: readonly string[] = [
 const FORECAST: Readonly<Record<string, OceanResolver | undefined>> = {
   '12.23:n': COLD_OCEAN, '12.23:m': ICE_FISHING, '12.23:a': ICE_FISHING, '12.23:e': ICE_FISHING,
   '12.24:n': ICE_FISHING, '12.24:m': ICE_FISHING, '12.24:a': ICE_FISHING, '12.24:e': ICE_FISHING,
-  '12.25:n': ICE_FISHING, '12.25:m': ICE_FISHING, '12.25:a': ICE_FISHING, '12.25:e': ICE_FISHING
+  '12.25:n': ICE_FISHING, '12.25:m': ICE_FISHING, '12.25:a': ICE_FISHING, '12.25:e': ICE_FISHING,
+  '12.26:n': ICE_FISHING, '12.26:m': ICE_FISHING, '12.26:a': ICE_FISHING, '12.26:e': ICE_FISHING,
+  '12.27:n': COLD_OCEAN, '12.27:m': COLD_OCEAN, '12.27:a': COLD_OCEAN, '12.27:e': COLD_OCEAN,
+  '12.29:n': COLD_OCEAN, '12.29:m': COLD_OCEAN, '12.29:a': COLD_OCEAN, '12.29:e': COLD_OCEAN,
+  '12.30:n': COLD_OCEAN, '12.30:m': COLD_OCEAN, '12.30:a': COLD_OCEAN, '12.30:e': COLD_OCEAN,
+  '12.31:n': COLD_OCEAN, '12.31:m': COLD_OCEAN, '12.31:a': COLD_OCEAN, '12.31:e': COLD_OCEAN,
+  '1.1:n': COLD_OCEAN, '1.1:m': COLD_OCEAN, '1.1:a': COLD_OCEAN, '1.1:e': COLD_OCEAN,
+  '1.6:n': COLD_OCEAN, '1.6:m': COLD_OCEAN, '1.6:a': COLD_OCEAN, '1.6:e': COLD_OCEAN,
+  '1.7:n': WINDY_OCEAN, '1.7:m': WINDY_OCEAN, '1.7:a': COLD_OCEAN, '1.7:e': COLD_OCEAN,
+  '1.8:n': COLD_OCEAN, '1.8:m': COLD_OCEAN, '1.8:a': COLD_OCEAN, '1.8:e': COLD_OCEAN
 };

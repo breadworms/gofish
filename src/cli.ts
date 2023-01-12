@@ -92,12 +92,13 @@ function main(playerArgs: string): string {
       const player = load();
       const today = forecast(player, new Date());
       const later = forecast(player, new Date(Date.now() + 21600000));
+      const { current, continuous } = today.reports();
 
-      if (today.ambiance === later.ambiance) {
-        return `${today.reports().continuous}`;
+      if (today.ambiance === later.ambiance || current === undefined) {
+        return continuous;
       }
 
-      return `${today.reports().current} ${later.reports().impending}`;
+      return `${current} ${later.reports().impending}`;
     }
 
     case '?':
