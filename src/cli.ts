@@ -2,29 +2,16 @@ async function render(text: string): Promise<string> {
   // On available platforms, shiny fish will be displayed as an emote.
   // Elsewhere, they will be displayed as their original text,
   // i.e. '<emoji>*'.
-  //
-  // While asterisk is a fairly ambiguous character, false positives
-  // are not a concern as they will not be an emote and therefore fall
-  // back on their original text. Furthermore, considering how tiny the
-  // program is, any nastiness can be avoided by simply not rendering
-  // conflicting text.
 
   // Quick-match for shinies.
   if (text.includes('*')) {
-    const matches = text.matchAll(/(\S+)\*(\S)?/g);
-    const promises: Promise<void>[] = [];
+    await Promise.all(Object.keys(SHINIES).map(emoji => {
+      const replace = `${emoji}*`;
 
-    for (const match of matches) {
-      // TODO: Don't call utils.getEmote twice for the same shiny. A
-      //       highly insignificant optimization, no doubt, as shinies
-      //       are exceedingly rare.
-
-      promises.push(utils.getEmote([SHINIES[match[1]]], match[0]).then(shiny => {
-        text = text.replace(match[0], shiny + (match[2] !== undefined ? ` ${match[2]}` : ''));
-      }));
-    }
-
-    await Promise.all(promises);
+      return utils.getEmote([SHINIES[emoji]], replace).then(shiny => {
+        text = text.replace(replace, `${shiny} `);
+      });
+    }));
   }
 
   return text;

@@ -34,7 +34,7 @@ var utils = {
   },
 
   getEmote: (emotes, fallback) => {
-    return new Promise((resolve, reject) => resolve(emotes[0]));
+    return Promise.resolve(emotes[0]);
   }
 };
 
