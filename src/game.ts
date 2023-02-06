@@ -240,7 +240,7 @@ function release(player: Player, index: number): string {
       }
     }
 
-  } else if (fish === '🧜‍♀️' || fish === '🧞‍♂️') {
+  } else if (fish === '🧜‍♀️' || fish === '🧞‍♂️' || fish === '🦆' || fish === '🐧') {
     // Temporary, these will have functionality later so don't make
     // players waste it by releasing.
     return `Huh? ${fish} won't budge!`;
