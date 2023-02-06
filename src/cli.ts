@@ -9,7 +9,7 @@ async function render(text: string): Promise<string> {
       const replace = `${emoji}*`;
 
       return utils.getEmote([SHINIES[emoji]], replace).then(shiny => {
-        text = text.replace(replace, `${shiny} `);
+        text = text.replaceAll(replace, `${shiny} `);
       });
     }));
   }
