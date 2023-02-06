@@ -31,5 +31,11 @@ var utils = {
     }
 
     return shuffled;
+  },
+
+  getEmote: (emotes, fallback) => {
+    return new Promise((resolve, reject) => resolve(emotes[0]));
   }
 };
+
+var executor = 'DrDisRespect';

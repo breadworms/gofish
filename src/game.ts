@@ -6,15 +6,30 @@ function reelIn(
   fish: false | string,
   weight: number
 } {
-  const fish = ocean.map[(y - 1) * ocean.width + (x - 1)];
+  let fish = ocean.map[(y - 1) * ocean.width + (x - 1)];
 
   if (fish === '🟦') {
     return { fish: false, weight: 0.0 };
   }
 
+  if (typeof fish === 'function') {
+    fish = fish();
+  }
+
+  const weight = Math.random() * x * y;
+
+  // A match between the player's ID and the float value of the weight
+  // means a shiny get.
+  if (
+    SHINIES[fish] !== undefined
+    && id().substring(1, 5) === weight.toString().substring(4, 8)
+  ) {
+    fish += '*';
+  }
+
   return {
-    fish: typeof fish === 'string' ? fish : fish(),
-    weight: Math.round(Math.random() * x * y * 100) / 100
+    fish,
+    weight: Math.round(weight * 100) / 100
   };
 }
 
@@ -32,7 +47,7 @@ function add(player: Player, fish: string, weight: number): void {
 
   if (record === undefined) {
     player.history.push({
-      fish: fish,
+      fish: fish.replace('*', ''),
       smallestWeight: weight,
       smallestDate: Date.now(),
       biggestWeight: weight,
@@ -67,7 +82,7 @@ function use(player: Player, gear: string, weight: number): boolean {
   return false;
 }
 
-function play(): string {
+async function play(): Promise<string> {
   const player = load();
   const date = new Date();
   const now = date.getTime();
@@ -159,7 +174,7 @@ function play(): string {
     player.canFishDate = now + 30000;
     save(player);
 
-    return `The one that got away... ${fish} was too big to land!`;
+    return render(`The one that got away... ${fish} was too big to land!`);
   }
 
   add(player, fish, weight);
@@ -197,7 +212,7 @@ function play(): string {
 
   save(player);
 
-  return resp;
+  return render(resp);
 }
 
 function release(player: Player, index: number): string {

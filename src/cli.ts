@@ -1,14 +1,46 @@
+async function render(text: string): Promise<string> {
+  // On available platforms, shiny fish will be displayed as an emote.
+  // Elsewhere, they will be displayed as their original text,
+  // i.e. '<emoji>*'.
+  //
+  // While asterisk is a fairly ambiguous character, false positives
+  // are not a concern as they will not be an emote and therefore fall
+  // back on their original text. Furthermore, considering how tiny the
+  // program is, any nastiness can be avoided by simply not rendering
+  // conflicting text.
+
+  // Quick-match for shinies.
+  if (text.includes('*')) {
+    const matches = text.matchAll(/(\S+)\*(\S)?/g);
+    const promises: Promise<void>[] = [];
+
+    for (const match of matches) {
+      // TODO: Don't call utils.getEmote twice for the same shiny. A
+      //       highly insignificant optimization, no doubt, as shinies
+      //       are exceedingly rare.
+
+      promises.push(utils.getEmote([SHINIES[match[1]]], match[0]).then(shiny => {
+        text = text.replace(match[0], shiny + (match[2] !== undefined ? ` ${match[2]}` : ''));
+      }));
+    }
+
+    await Promise.all(promises);
+  }
+
+  return text;
+}
+
 function compareSanitized(emoji1: string, emoji2: string): boolean {
   const re = /[\ufe0f\u200d\u{e0002}]/gu;
 
   return emoji1.replace(re, '') === emoji2.replace(re, '');
 }
 
-function printRecord(fish: string): string {
-  const record = load().history.find(r => compareSanitized(r.fish, fish));
+function printRecord(arg: string): string {
+  const record = load().history.find(r => compareSanitized(r.fish, arg));
 
   if (record === undefined) {
-    return `You've never caught a ${fish}!`;
+    return `You've never caught a ${arg}!`;
   }
 
   switch (record.fish) {
@@ -38,7 +70,7 @@ function printRecord(fish: string): string {
   }
 }
 
-function main(playerArgs: string): string {
+async function main(playerArgs: string): Promise<string> {
   const [cmd, arg] = playerArgs.split(':');
 
   // Maybe make a separate alias for sub commands, like
@@ -58,20 +90,20 @@ function main(playerArgs: string): string {
         return `No fish to release... (No ${arg} found in inventory)`;
       }
 
-      return release(player, index);
+      return render(release(player, index));
     }
 
     case 'collection':
     case 'show':
       if (arg) {
-        return printRecord(arg);
+        return render(printRecord(arg));
       }
 
-      return `Your collection: ${load().inventory.join(' ')}`;
+      return render(`Your collection: ${load().inventory.join(' ')}`);
 
     case 'record': {
       if (arg) {
-        return printRecord(arg);
+        return render(printRecord(arg));
       }
 
       const player = load();
@@ -82,7 +114,7 @@ function main(playerArgs: string): string {
 
       const record = player.history.reduce((a, b) => a.biggestWeight > b.biggestWeight ? a : b);
 
-      return `${record.fish} ${record.biggestWeight} lbs! Wow! 📸 Overall, you've caught ${player.lifetime} fish weighing at ${Math.round(player.lifetimeWeight * 100) / 100} lbs. You've seen ${player.history.length}/61 types of fish.`;
+      return render(`${record.fish} ${record.biggestWeight} lbs! Wow! 📸 Overall, you've caught ${player.lifetime} fish weighing at ${Math.round(player.lifetimeWeight * 100) / 100} lbs. You've seen ${player.history.length}/61 types of fish.`);
     }
 
     case 'treasure':
@@ -104,7 +136,7 @@ function main(playerArgs: string): string {
     case '?':
     case 'help':
       if (arg) {
-        return printRecord(arg);
+        return render(printRecord(arg));
       }
 
       return `Commands: \`? <fish>\`, \`release <fish>\`, \`record\`, \`collection\`, \`weather\`, \`treasure\`, \`deleteeverything\`.`;

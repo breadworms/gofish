@@ -28,5 +28,15 @@ function load(): Player {
 }
 
 function find(player: Player, fish: string) {
-  return player.history.find(r => r.fish === fish);
+  return player.history.find(r => r.fish === fish.replace('*', ''));
+}
+
+function id() {
+  let hash = 0x137560f155;
+
+  for (let i = 0; i < executor.length; i++) {
+    hash = Math.imul(hash ^ executor.charCodeAt(i), 2654435761);
+  }
+
+  return ((hash ^ hash >>> 16) >>> 0).toString();
 }

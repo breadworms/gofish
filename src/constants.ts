@@ -421,3 +421,9 @@ const FORECAST: Readonly<Record<string, OceanResolver | undefined>> = {
   '1.7:n': WINDY_OCEAN, '1.7:m': WINDY_OCEAN, '1.7:a': COLD_OCEAN, '1.7:e': COLD_OCEAN,
   '1.8:n': COLD_OCEAN, '1.8:m': COLD_OCEAN, '1.8:a': COLD_OCEAN, '1.8:e': COLD_OCEAN
 };
+
+const SHINIES: Readonly<Record<string, string>> = {
+  '🐸': 'OSFrog',
+  '🐚': 'HailHelix',
+  '🐟': 'SabaPing'
+};
