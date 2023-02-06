@@ -6,10 +6,10 @@ async function render(text: string): Promise<string> {
   // Quick-match for shinies.
   if (text.includes('*')) {
     await Promise.all(Object.keys(SHINIES).map(emoji => {
-      const replace = `${emoji}*`;
+      const original = `${emoji}*`;
 
-      return utils.getEmote([SHINIES[emoji]], replace).then(shiny => {
-        text = text.replaceAll(replace, `${shiny} `);
+      return utils.getEmote([SHINIES[emoji]], original).then(emote => {
+        text = text.replaceAll(original, `${emote} `);
       });
     }));
   }
