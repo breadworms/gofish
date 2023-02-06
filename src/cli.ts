@@ -73,10 +73,6 @@ function printRecord(arg: string): string {
 async function main(playerArgs: string): Promise<string> {
   const [cmd, arg] = playerArgs.split(':');
 
-  // Maybe make a separate alias for sub commands, like
-  // `$$ gofishtools`. Would reduce lines of code for what is 99% of
-  // usage.
-
   switch (cmd) {
     case 'release': {
       if (!arg) {

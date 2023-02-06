@@ -400,6 +400,12 @@ const SLOT_MACHINE: OceanResolver = () => ({
   ]
 });
 
+const SHINIES: Readonly<Record<string, string>> = {
+  '🐸': 'OSFrog',
+  '🐚': 'HailHelix',
+  '🐟': 'SabaPing'
+};
+
 const TIMEOFDAY: readonly string[] = [
   'n', 'n', 'n', 'n', 'n', 'n',
   'm', 'm', 'm', 'm', 'm', 'm',
@@ -420,10 +426,4 @@ const FORECAST: Readonly<Record<string, OceanResolver | undefined>> = {
   '1.6:n': COLD_OCEAN, '1.6:m': COLD_OCEAN, '1.6:a': COLD_OCEAN, '1.6:e': COLD_OCEAN,
   '1.7:n': WINDY_OCEAN, '1.7:m': WINDY_OCEAN, '1.7:a': COLD_OCEAN, '1.7:e': COLD_OCEAN,
   '1.8:n': COLD_OCEAN, '1.8:m': COLD_OCEAN, '1.8:a': COLD_OCEAN, '1.8:e': COLD_OCEAN
-};
-
-const SHINIES: Readonly<Record<string, string>> = {
-  '🐸': 'OSFrog',
-  '🐚': 'HailHelix',
-  '🐟': 'SabaPing'
 };

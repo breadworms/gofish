@@ -248,20 +248,20 @@ function release(player: Player, index: number): string {
   } else {
     resp = `Bye bye ${fish}! 🫳🌊`;
 
-    const glimmer = random(SLOT_MACHINE(player));
+    const sparkle = random(SLOT_MACHINE(player));
 
     // Constrain weights to artificially lower the odds, making the real
     // slot machine always much stronger.
     if (
-      glimmer.fish !== false &&
-      glimmer.weight > 1.0 &&
-      (
-        glimmer.fish !== '🎰' ||
-        (glimmer.weight >= 10.0 && glimmer.weight <= 12.5)
+      sparkle.fish !== false
+      && sparkle.weight > 1.0
+      && (
+        sparkle.fish !== '🎰'
+        || (sparkle.weight >= 10.0 && sparkle.weight <= 12.5)
       )
     ) {
-      add(player, glimmer.fish, glimmer.weight);
-      resp += ` ...Huh? ✨ Something is sparkling in the ocean... 🥍 ${glimmer.fish} Got it!`;
+      add(player, sparkle.fish, sparkle.weight);
+      resp += ` ...Huh? ✨ Something is sparkling in the ocean... 🥍 ${sparkle.fish} Got it!`;
     }
   }
 
