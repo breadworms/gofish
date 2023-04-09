@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig-base",
+  "files": [
+    "../../sandbox.d.ts"
+  ],
+  "compilerOptions": {
+    "outFile": "../../dist/gopvp.js"
+  }
+}

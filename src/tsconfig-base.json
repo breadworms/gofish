@@ -1,11 +1,4 @@
 {
-  "files": [
-    "./sandbox.d.ts",
-    "./src/game.ts",
-    "./src/cli.ts",
-    "./src/player.ts",
-    "./src/constants.ts"
-  ],
   "compilerOptions": {
     "noImplicitAny": true,
     "noImplicitReturns": true,
@@ -17,7 +10,6 @@
     "module": "none",
     "moduleResolution": "node",
     "lib": ["esnext"],
-    "types": [],
-    "outFile": "dist/gofish.js"
+    "types": []
   }
 }
