@@ -1,4 +1,4 @@
-import type DankDebug from 'supibot-package-manager/commands/dankdebug/sandbox';
+import type DankDebug from 'supibot/commands/dankdebug/sandbox';
 
 declare global {
   type SupibotStoreValue = DankDebug.SupibotStoreValue;
