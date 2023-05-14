@@ -7,6 +7,7 @@ declare global {
   const customData = DankDebug.customData;
   const utils = DankDebug.utils;
   const executor = DankDebug.executor;
+  const channel = DankDebug.channel;
 
   interface Array<T> {
     // This isn't in esnext yet for some reason.

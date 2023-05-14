@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig-base",
+  "files": [
+    "./sandbox.d.ts",
+    "./src/game.ts",
+    "./src/cli.ts",
+    "./src/gofish.ts",
+    "./src/player.ts",
+    "./src/constants/weather.ts",
+    "./src/constants/shinies.ts"
+  ],
+  "compilerOptions": {
+    "outFile": "./dist/gofish.js"
+  }
+}

@@ -2,9 +2,18 @@ var data = {
 
 };
 
+var channelData = {
+
+};
+
 var customData = {
   get: (key) => data[key],
-  set: (key, value) => data[key] = value
+  set: (key, value) => data[key] = Object.assign(value, { canFishDate: 1 })
+};
+
+var channelCustomData = {
+  get: (key) => channelData[key],
+  set: (key, value) => channelData[key] = value
 };
 
 var utils = {
@@ -39,3 +48,4 @@ var utils = {
 };
 
 var executor = 'DrDisRespect';
+var channel = 'The Arena';

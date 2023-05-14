@@ -43,6 +43,7 @@ function forecast(player: Player, date: Date): Ocean {
 }
 
 function add(player: Player, fish: string, weight: number): void {
+  // Check if the fish breaks the player's previous records.
   const record = find(player, fish);
 
   if (record === undefined) {
@@ -66,9 +67,38 @@ function add(player: Player, fish: string, weight: number): void {
     }
   }
 
+  // Add lifetime stats.
   player.lifetime += 1;
-  player.lifetimeWeight += weight;
+  player.lifetimeWeight = Math.round((player.lifetimeWeight + weight) * 100) / 100;
 
+  // Add weekly channel-based stats.
+  const currentWeek = weekId();
+
+  // Clear stats if it's a new week.
+  if (player.week !== currentWeek) {
+    player.channels = {};
+    player.week = currentWeek;
+  }
+
+  const channelRecords = player.channels[channel];
+
+  if (channelRecords === undefined) {
+    player.channels[channel] = {
+      weekly: 1,
+      weeklyWeight: weight,
+      weeklyBiggest: weight
+    };
+
+  } else {
+    channelRecords.weekly += 1;
+    channelRecords.weeklyWeight = Math.round((channelRecords.weeklyWeight + weight) * 100) / 100;
+
+    if (channelRecords.weeklyBiggest < weight) {
+      channelRecords.weeklyBiggest = weight;
+    }
+  }
+
+  // Add the fish to the player's inventory.
   player.inventory.push(fish);
 }
 
@@ -84,8 +114,8 @@ function use(player: Player, gear: string, weight: number): boolean {
 
 async function play(): Promise<string> {
   const player = load();
-  const date = new Date();
-  const now = date.getTime();
+  const today = new Date();
+  const now = today.getTime();
 
   if (player.canFishDate === 0) {
     player.canFishDate = now;
@@ -102,7 +132,7 @@ async function play(): Promise<string> {
     return `Ready to fish ${utils.timeDelta(player.canFishDate)}`;
   }
 
-  let ocean = forecast(player, date);
+  let ocean = forecast(player, today);
 
   let minRange = 1, maxRange = 10;
   let minDepth = 1, maxDepth = 10;
@@ -110,7 +140,7 @@ async function play(): Promise<string> {
   // Go through player inventory, checking for lures, hooks and
   // slot machines.
   for (let i = player.inventory.length - 1; i > -1; i--) {
-    if (player.inventory[i] === '🎰') {
+    if (player.inventory[i] === 'disabled🎰') {
       const slot = find(player, '🎰')!;
 
       // A slot machine's biggest weight are the spins remaining.
@@ -183,9 +213,9 @@ async function play(): Promise<string> {
 
   // Check for pirate set bonus.
   if (
-    player.inventory.includes('🗡️')
+    player.inventory.includes('🧭')
     && player.inventory.includes('👑')
-    && player.inventory.includes('🧭')
+    && player.inventory.includes('🗡️')
   ) {
     const eaten = random(ocean);
 

@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig-base",
+  "files": [
+    "./sandbox.d.ts",
+    "./src/cli.ts",
+    "./src/gopvp.ts",
+    "./src/player.ts",
+    "./src/realm.ts",
+    "./src/constants/shinies.ts"
+  ],
+  "compilerOptions": {
+    "outFile": "./dist/gopvp.js"
+  }
+}

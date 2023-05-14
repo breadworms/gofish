@@ -400,12 +400,6 @@ const SLOT_MACHINE: OceanResolver = () => ({
   ]
 });
 
-const SHINIES: Readonly<Record<string, string>> = {
-  '🐸': 'OSFrog',
-  '🐚': 'HailHelix',
-  '🐟': 'SabaPing'
-};
-
 const TIMEOFDAY: readonly string[] = [
   'n', 'n', 'n', 'n', 'n', 'n',
   'm', 'm', 'm', 'm', 'm', 'm',

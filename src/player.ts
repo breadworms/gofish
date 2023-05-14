@@ -13,6 +13,12 @@ interface Player {
   history: PlayerRecord[];
   lifetime: number;
   lifetimeWeight: number;
+  week: string;
+  channels: Record<string, {
+    weekly: number;
+    weeklyWeight: number;
+    weeklyBiggest: number;
+  }>;
   canFishDate: ECMAScriptTimestamp;
 }
 
@@ -22,7 +28,15 @@ function save(player: Player | null): void {
 
 function load(): Player {
   return Object.assign(
-    { inventory: [], history: [], lifetime: 0, lifetimeWeight: 0.0, canFishDate: 0 },
+    {
+      inventory: [],
+      history: [],
+      lifetime: 0,
+      lifetimeWeight: 0.0,
+      week: '',
+      channels: {},
+      canFishDate: 0
+    },
     customData.get('gofishgame')
   );
 }
@@ -31,7 +45,7 @@ function find(player: Player, fish: string) {
   return player.history.find(r => r.fish === fish.replace('*', ''));
 }
 
-function id() {
+function id(): string {
   let hash = 0x137560f155;
 
   for (let i = 0; i < executor.length; i++) {
@@ -39,4 +53,12 @@ function id() {
   }
 
   return ((hash ^ hash >>> 16) >>> 0).toString();
+}
+
+function weekId(): string {
+  const lastSaturday = new Date();
+
+  lastSaturday.setDate(lastSaturday.getDate() - lastSaturday.getDay() - 1);
+
+  return lastSaturday.toDateString();
 }

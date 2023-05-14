@@ -1,9 +1,9 @@
 import * as fs from 'fs';
-import { basename } from 'path';
+import { parse } from 'path';
 import { minify } from 'uglify-js';
 
-const tsconfig = JSON.parse(fs.readFileSync('./src/tsconfig.json', 'utf8'));
-const commands = tsconfig.references.map((reference => basename(reference.path)));
+const tsconfig = JSON.parse(fs.readFileSync('./tsconfig.json', 'utf8'));
+const commands = tsconfig.references.map(reference => parse(reference.path).name.replace('tsconfig-', ''));
 
 for (const command of commands) {
   const contents = fs.readFileSync(`./dist/${command}.js`, 'utf8')
