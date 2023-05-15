@@ -1,5 +1,4 @@
 interface RealmRecord {
-  category: string;
   value: number;
   heldBy: string[];
 }

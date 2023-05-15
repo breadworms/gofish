@@ -1,13 +1,13 @@
+// Bless this mess
+//
+
 type PlayerTournamentStandings = Record<string, RealmRecord & { place: number }>;
 
-function printCheckin(date: Date): string {
-  date.setHours(16, 0, 0, 0);
-  date.setDate(date.getDate() - date.getDay() + 6);
-
-  return `Check-in starts ${utils.timeDelta(date)}! 🗓️`;
-}
-
 function getPlayerStandings(realm: Realm, player: Player) {
+  if (realm.week === '' || player.channels[channel] === undefined) {
+    return false;
+  }
+
   const standings: PlayerTournamentStandings = {};
 
   for (const category of Object.keys(player.channels[channel])) {
@@ -28,12 +28,12 @@ function getPlayerStandings(realm: Realm, player: Player) {
 
 function checkin(): string {
   const player = load();
-  const playerRecords = player.channels[channel];
   const realm = loadRealm();
   const date = new Date();
+  const day = date.getDay();
 
   // Check if it's tournament day.
-  if (date.getDay() === 6) {
+  if (day === 6) {
     if (date.getHours() < 16) {
       // It's not check-in time yet, show a countdown.
       return printCheckin(date);
@@ -41,6 +41,7 @@ function checkin(): string {
 
     // Check-in time. Add the player's records to the realm.
     const currentWeek = weekId();
+    const playerRecords = player.channels[channel];
 
     if (playerRecords === undefined || player.week !== currentWeek) {
       return `You haven't caught anything in this chat! Go fish!`;
@@ -68,12 +69,7 @@ function checkin(): string {
 
         existingRecord.heldBy.push(executor);
       } else {
-        records.push({
-          category,
-          value,
-          heldBy: [executor]
-        });
-
+        records.push({ value, heldBy: [executor] });
         records.sort((a, b) => b.value - a.value);
       }
 
@@ -102,7 +98,7 @@ function checkin(): string {
     // If there was no change, show the player their current standings.
     const standings = getPlayerStandings(realm, player) as PlayerTournamentStandings;
 
-    let resp = `You sneak a peek at the current standings 📋... Total fish... #${standings['weekly'].place}; by weight, #${standings['weeklyWeight'].place}; biggest fish, #${standings['weeklyBiggest'].place}.`;
+    let resp = `You sneak a peek at the current standings 📋... Total fish... 🪣 #${standings['weekly'].place}; by weight, ⚖️ #${standings['weeklyWeight'].place}; biggest fish, 🎣 #${standings['weeklyBiggest'].place}.`;
 
     if (standings['weekly'].place <= 5 || standings['weeklyWeight'].place <= 5 || standings['weeklyBiggest'].place <= 5) {
       resp += ` So far so good!`;
@@ -116,27 +112,24 @@ function checkin(): string {
   // It's not tournament day, and the player participated in last
   // week's tournament, we will show them their results. Otherwise,
   // show the time until the next tournament.
-  if (
-    player.week === ''
-    || realm.week === ''
-    || playerRecords === undefined
-  ) {
-    return printCheckin(date);
-  }
-
   const standings = getPlayerStandings(realm, player);
 
   if (standings === false) {
     return printCheckin(date);
   }
 
-  const flairs = [
-    'the champion ✨🏆✨!',
-    'the runner-up 🥈!',
-    'third 🥉!'
-  ];
+  const tenseString = day === 0 ? 'are' : 'were';
+  const placeString = (p: number) => [`You ${tenseString} the champion ✨🏆✨!`, `You ${tenseString} the runner-up 🥈!`, `You got third place 🥉!`][p - 1]
+    ?? p + (['st', 'nd', 'rd'][((p + 90) % 100 - 10) % 10 - 1] ?? 'th') + ' place.'
 
-  return `The results for last week are in 🎣! You caught ${standings['weekly'].value} fish making you ${flairs[standings['weekly'].place - 1] ?? '#' + standings['weekly'].place}. Together they weighed ${standings['weeklyWeight'].value} lbs, making you ${flairs[standings['weeklyWeight'].place - 1] ?? '#' + standings['weeklyWeight'].place}. Your biggest catch weighed ${standings['weeklyBiggest'].value} lbs, making it ${flairs[standings['weeklyBiggest'].place - 1] ?? '#' + standings['weeklyBiggest'].place}.`;
+  return `${day === 0 ? '📣 The results are in!' : 'Last week...'} You caught 🪣 ${standings['weekly'].value} fish: ${placeString(standings['weekly'].place)} Together they weighed ⚖️ ${standings['weeklyWeight'].value} lbs: ${placeString(standings['weeklyWeight'].place)} Your biggest catch weighed 🎣 ${standings['weeklyBiggest'].value} lbs: ${placeString(standings['weeklyBiggest'].place)}`;
+}
+
+function printCheckin(date: Date): string {
+  date.setHours(16, 0, 0, 0);
+  date.setDate(date.getDate() - date.getDay() + 6);
+
+  return `Check-in starts ${utils.timeDelta(date)}! 🗓️`;
 }
 
 async function main(playerArgs: string): Promise<string> {
