@@ -1,20 +1,18 @@
 // Bless this mess
 //
 
-type PlayerTournamentStandings = Record<string, RealmRecord & { place: number }>;
-
 function getPlayerStandings(realm: Realm, player: Player) {
   if (realm.week === '' || player.channels[channel] === undefined) {
-    return false;
+    return {};
   }
 
-  const standings: PlayerTournamentStandings = {};
+  const standings: Record<string, RealmRecord & { place: number }> = {};
 
   for (const category of Object.keys(player.channels[channel])) {
     const index = realm.categories[category].findIndex(r => r.heldBy.includes(executor));
 
     if (index === -1) {
-      return false;
+      return {};
     }
 
     standings[category] = Object.assign(
@@ -96,11 +94,11 @@ function checkin(): string {
     }
 
     // If there was no change, show the player their current standings.
-    const standings = getPlayerStandings(realm, player) as PlayerTournamentStandings;
+    const { weekly, weeklyWeight, weeklyBiggest } = getPlayerStandings(realm, player);
 
-    let resp = `You sneak a peek at the current standings 📋... Total fish... 🪣 #${standings['weekly'].place}; by weight, ⚖️ #${standings['weeklyWeight'].place}; biggest fish, 🎣 #${standings['weeklyBiggest'].place}.`;
+    let resp = `You sneak a peek at the current standings 📋... Total fish... 🪣 #${weekly.place}; by weight, ⚖️ #${weeklyWeight.place}; biggest fish, 🎣 #${weeklyBiggest.place}.`;
 
-    if (standings['weekly'].place <= 5 || standings['weeklyWeight'].place <= 5 || standings['weeklyBiggest'].place <= 5) {
+    if (weekly.place <= 5 || weeklyWeight.place <= 5 || weeklyBiggest.place <= 5) {
       resp += ` So far so good!`;
     } else {
       resp += ` You did your best.`;
@@ -112,9 +110,9 @@ function checkin(): string {
   // It's not tournament day, and the player participated in last
   // week's tournament, we will show them their results. Otherwise,
   // show the time until the next tournament.
-  const standings = getPlayerStandings(realm, player);
+  const { weekly, weeklyWeight, weeklyBiggest } = getPlayerStandings(realm, player);
 
-  if (standings === false) {
+  if (weekly === undefined) {
     return printCheckin(date);
   }
 
@@ -122,7 +120,7 @@ function checkin(): string {
   const placeString = (p: number) => [`You ${tenseString} the champion ✨🏆✨!`, `You ${tenseString} the runner-up 🥈!`, `You got third place 🥉!`][p - 1]
     ?? p + (['st', 'nd', 'rd'][((p + 90) % 100 - 10) % 10 - 1] ?? 'th') + ' place.'
 
-  return `${day === 0 ? '📣 The results are in!' : 'Last week...'} You caught 🪣 ${standings['weekly'].value} fish: ${placeString(standings['weekly'].place)} Together they weighed ⚖️ ${standings['weeklyWeight'].value} lbs: ${placeString(standings['weeklyWeight'].place)} Your biggest catch weighed 🎣 ${standings['weeklyBiggest'].value} lbs: ${placeString(standings['weeklyBiggest'].place)}`;
+  return `${day === 0 ? '📣 The results are in!' : 'Last week...'} You caught 🪣 ${weekly.value} fish: ${placeString(weekly.place)} Together they weighed ⚖️ ${weeklyWeight.value} lbs: ${placeString(weeklyWeight.place)} Your biggest catch weighed 🎣 ${weeklyBiggest.value} lbs: ${placeString(weeklyBiggest.place)}`;
 }
 
 function printCheckin(date: Date): string {
