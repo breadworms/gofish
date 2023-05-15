@@ -116,8 +116,7 @@ function checkin(): string {
     return printCheckin(date);
   }
 
-  const tenseString = day === 0 ? 'are' : 'were';
-  const placeString = (p: number) => [`You ${tenseString} the champion ✨🏆✨!`, `You ${tenseString} the runner-up 🥈!`, `You got third place 🥉!`][p - 1]
+  const placeString = (p: number) => [`Victory ✨🏆✨!`, `That's runner-up 🥈!`, `That's third 🥉!`][p - 1]
     ?? p + (['st', 'nd', 'rd'][((p + 90) % 100 - 10) % 10 - 1] ?? 'th') + ' place.'
 
   return `${day === 0 ? '📣 The results are in!' : 'Last week...'} You caught 🪣 ${weekly.value} fish: ${placeString(weekly.place)} Together they weighed ⚖️ ${weeklyWeight.value} lbs: ${placeString(weeklyWeight.place)} Your biggest catch weighed 🎣 ${weeklyBiggest.value} lbs: ${placeString(weeklyBiggest.place)}`;
