@@ -236,7 +236,7 @@ async function play(): Promise<string> {
 
   if (realm !== null && weight > realm.record) {
     realm.record = weight;
-    resp += ` It's a new channel-wide record! 🎊`;
+    resp += ` It's a channel-wide record! 🎊`;
 
     loadRealm(realm);
   } else if (weight > biggest) {
