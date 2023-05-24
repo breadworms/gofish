@@ -78,7 +78,7 @@ function loadRealm(): Realm | null;
 function loadRealm(realm: Realm): void;
 function loadRealm(realm?: Realm | number): Realm | null | void {
   if (realm === undefined) {
-    if (channel === '(none)' || channel === null) {
+    if (channel === '(none)' || channel == null) {
       return null;
     }
 

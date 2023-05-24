@@ -129,12 +129,13 @@ function printCheckin(date: Date): string {
 }
 
 async function main(playerArgs: string): Promise<string> {
-  const [cmd, arg] = playerArgs.split(':');
   const realm = loadRealm();
 
   if (realm === null) {
-    return `🌴 Battle Cove... It is strangely quiet, just you, the ocean, and the gulls overhead.`;
+    return `🌴 It is strangely quiet. Just you, the ocean, and the gulls overhead.`;
   }
+
+  const [cmd, arg] = playerArgs.split(':');
 
   switch (cmd) {
     case 'checkin':
