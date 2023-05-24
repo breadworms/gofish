@@ -5,7 +5,7 @@
     "./src/game.ts",
     "./src/cli.ts",
     "./src/gofish.ts",
-    "./src/player.ts",
+    "./src/store.ts",
     "./src/constants/weather.ts",
     "./src/constants/shinies.ts"
   ],

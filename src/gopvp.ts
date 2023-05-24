@@ -24,9 +24,8 @@ function getPlayerStandings(realm: Realm, player: Player) {
   return standings;
 }
 
-function checkin(): string {
+function checkin(realm: Realm): string {
   const player = load();
-  const realm = loadRealm();
   const date = new Date();
   const day = date.getDay();
 
@@ -131,13 +130,18 @@ function printCheckin(date: Date): string {
 
 async function main(playerArgs: string): Promise<string> {
   const [cmd, arg] = playerArgs.split(':');
+  const realm = loadRealm();
+
+  if (realm === null) {
+    return `🌴 Battle Cove... It is strangely quiet, just you, the ocean, and the gulls overhead.`;
+  }
 
   switch (cmd) {
     case 'checkin':
     case 'check-in':
-      return checkin();
+      return checkin(realm);
 
     default:
-      return '🌴 Battle Cove... A place to compare yourself against other fishers. Use `check-in` for weekly fishing tournaments.';
+      return `🌴 Battle Cove... A place to compare yourself against other fishers. Use \`check-in\` for weekly fishing tournaments.`;
   }
 }

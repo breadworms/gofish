@@ -3,8 +3,7 @@
   "files": [
     "./sandbox.d.ts",
     "./src/gopvp.ts",
-    "./src/player.ts",
-    "./src/realm.ts"
+    "./src/store.ts"
   ],
   "compilerOptions": {
     "outFile": "./dist/gopvp.js"

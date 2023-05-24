@@ -22,6 +22,17 @@ interface Player {
   canFishDate: ECMAScriptTimestamp;
 }
 
+interface RealmRecord {
+  value: number;
+  heldBy: string[];
+}
+
+interface Realm {
+  record: number;
+  week: string;
+  categories: Record<string, RealmRecord[]>;
+}
+
 function save(player: Player | null): void {
   customData.set('gofishgame', player as Player & Record<string, SupibotStoreValue>);
 }
@@ -61,4 +72,25 @@ function weekId(): string {
   lastSaturday.setDate(lastSaturday.getDate() - lastSaturday.getDay() - 1);
 
   return lastSaturday.toDateString();
+}
+
+function loadRealm(): Realm | null;
+function loadRealm(realm: Realm): void;
+function loadRealm(realm?: Realm | number): Realm | null | void {
+  if (realm === undefined) {
+    if (channel === '(none)' || channel === null) {
+      return null;
+    }
+
+    return Object.assign(
+      {
+        record: 0.0,
+        week: '',
+        categories: {}
+      },
+      channelCustomData.get('gofishgame')
+    );
+  }
+
+  channelCustomData.set('gofishgame', realm as Realm & Record<string, SupibotStoreValue>);
 }

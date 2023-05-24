@@ -229,8 +229,19 @@ async function play(): Promise<string> {
   // `min*` being more than 1 means gear was found and should be
   // used.
   resp += (minRange > 1 && use(player, '🎏', weight) ? ' 🎏 broke!💢' : '')
-    + (minDepth > 1 && use(player, '🪝', weight) ? ' 🪝 broke!💢' : '')
-    + (weight > biggest ? ' A new record! 🎉' : '');
+    + (minDepth > 1 && use(player, '🪝', weight) ? ' 🪝 broke!💢' : '');
+
+  // Check for personal and channel-wide records.
+  const realm = loadRealm();
+
+  if (realm !== null && weight > realm.record) {
+    realm.record = weight;
+    resp += ` It's a new channel-wide record! 🎊`;
+
+    loadRealm(realm);
+  } else if (weight > biggest) {
+    resp += ` A new record! 🎉`;
+  }
 
   // 8 height is slot machine, skip cooldown.
   if (ocean.height === 8) {
