@@ -407,17 +407,7 @@ const TIMEOFDAY: readonly string[] = [
   'e', 'e', 'e', 'e', 'e', 'e'
 ];
 
-const FORECAST: Readonly<Record<string, OceanResolver | undefined>> = {
-  '12.23:n': COLD_OCEAN, '12.23:m': ICE_FISHING, '12.23:a': ICE_FISHING, '12.23:e': ICE_FISHING,
-  '12.24:n': ICE_FISHING, '12.24:m': ICE_FISHING, '12.24:a': ICE_FISHING, '12.24:e': ICE_FISHING,
-  '12.25:n': ICE_FISHING, '12.25:m': ICE_FISHING, '12.25:a': ICE_FISHING, '12.25:e': ICE_FISHING,
-  '12.26:n': ICE_FISHING, '12.26:m': ICE_FISHING, '12.26:a': ICE_FISHING, '12.26:e': ICE_FISHING,
-  '12.27:n': COLD_OCEAN, '12.27:m': COLD_OCEAN, '12.27:a': COLD_OCEAN, '12.27:e': COLD_OCEAN,
-  '12.29:n': COLD_OCEAN, '12.29:m': COLD_OCEAN, '12.29:a': COLD_OCEAN, '12.29:e': COLD_OCEAN,
-  '12.30:n': COLD_OCEAN, '12.30:m': COLD_OCEAN, '12.30:a': COLD_OCEAN, '12.30:e': COLD_OCEAN,
-  '12.31:n': COLD_OCEAN, '12.31:m': COLD_OCEAN, '12.31:a': COLD_OCEAN, '12.31:e': COLD_OCEAN,
-  '1.1:n': COLD_OCEAN, '1.1:m': COLD_OCEAN, '1.1:a': COLD_OCEAN, '1.1:e': COLD_OCEAN,
-  '1.6:n': COLD_OCEAN, '1.6:m': COLD_OCEAN, '1.6:a': COLD_OCEAN, '1.6:e': COLD_OCEAN,
-  '1.7:n': WINDY_OCEAN, '1.7:m': WINDY_OCEAN, '1.7:a': COLD_OCEAN, '1.7:e': COLD_OCEAN,
-  '1.8:n': COLD_OCEAN, '1.8:m': COLD_OCEAN, '1.8:a': COLD_OCEAN, '1.8:e': COLD_OCEAN
+const FORECAST: Readonly<Record<string, [OceanResolver, OceanResolver, OceanResolver, OceanResolver, OceanResolver]>> = {
+  '4': [CALM_OCEAN, WINDY_OCEAN, FOGGY_OCEAN, RAINY_OCEAN, RAINY_OCEAN],
+  '5': [CALM_OCEAN, WINDY_OCEAN, FOGGY_OCEAN, RAINY_OCEAN, RAINY_OCEAN]
 };
