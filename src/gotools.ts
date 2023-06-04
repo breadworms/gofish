@@ -1,11 +1,3 @@
-const FISH_TYPES: readonly string[] = [
-  '🌿', '🧦', '🪝', '🐸', '🕷️', '🐍', '🎏', '🐚', '🐠', '🪸', '🐡', '🦀', '🐟',
-  '🗡️', '🐬', '🐙', '🐋', '💀', '🪳', '🦐', '🐢', '🦑', '🐌', '🦪', '🐊', '🦕',
-  '🐉', '🦞', '🧽', '🦈', '🐳', '🥒', '🧜‍♀️', '👑', '🪱', '🪶', '🩰', '☂️', '🪵',
-  '👒', '🦆', '🥪', '🧟', '👟', '🦎', '🦦', '🦠', '🧞‍♂️', '🍄', '🧤', '👢', '🧊',
-  '🦭', '🪨', '🧸', '🧣', '⛸️', '🐧', '🧭', '🐻‍❄️', '🍬', '🎰', '🐸*', '🐚*', '🐟*'
-];
-
 async function backup(): Promise<string> {
   const player = load();
 
@@ -19,9 +11,9 @@ async function backup(): Promise<string> {
     .join(',');
   encoded = Buffer.from(encoded).toString('base64');
 
-  const code = `Your code is below. Keep it somewhere safe, and, should anything happen to your data, you can contact breadworms to get it back.\n\nTHIS URL IS TEMPORARY. COPY THE CODE, NOT THE URL.\n\n${encoded}`;
+  const paste = `Your code is below. Keep it somewhere safe, and, should anything happen to your data, you can contact breadworms to get it back.\n\nTHIS URL IS TEMPORARY. COPY THE CODE, NOT THE URL.\n\n${encoded}`;
 
-  return command.execute('hbp', code).then(res => {
+  return command.execute('hbp', paste).then(res => {
     if (!res.success) {
       throw new Error(`Couldn't back up your data: ${res.reason}`);
     }
@@ -51,6 +43,14 @@ async function main(playerArgs: string): Promise<string> {
       return `This will reset all of your data, including *history, records and collection*. Use \`deleteeverything yes\` if you wish to proceed.`;
 
     default:
-      return `Tools for GO FISH. Commands: \`saveeverything\`, \`deleteeverything\`.`;
+      return `Tools for GO FISH GAME. Commands: \`saveeverything\`, \`deleteeverything\`.`;
   }
 }
+
+const FISH_TYPES: readonly string[] = [
+  '🌿', '🧦', '🪝', '🐸', '🕷️', '🐍', '🎏', '🐚', '🐠', '🪸', '🐡', '🦀', '🐟',
+  '🗡️', '🐬', '🐙', '🐋', '💀', '🪳', '🦐', '🐢', '🦑', '🐌', '🦪', '🐊', '🦕',
+  '🐉', '🦞', '🧽', '🦈', '🐳', '🥒', '🧜‍♀️', '👑', '🪱', '🪶', '🩰', '☂️', '🪵',
+  '👒', '🦆', '🥪', '🧟', '👟', '🦎', '🦦', '🦠', '🧞‍♂️', '🍄', '🧤', '👢', '🧊',
+  '🦭', '🪨', '🧸', '🧣', '⛸️', '🐧', '🧭', '🐻‍❄️', '🍬', '🎰', '🐸*', '🐚*', '🐟*'
+];
