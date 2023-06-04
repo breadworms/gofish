@@ -9,12 +9,11 @@ const FISH_TYPES: readonly string[] = [
 async function backup(): Promise<string> {
   const player = load();
 
-  let encoded = `${player.lifetime},${player.lifetimeWeight},${executor},${Date.now()}`;
-  encoded += 'I';
+  let encoded = `${player.lifetime},${player.lifetimeWeight},${executor},${Date.now()},${player.inventory.length},`;
   encoded += player.inventory
     .map(fish => FISH_TYPES.indexOf(fish))
     .join(',');
-  encoded += 'H';
+  encoded += `,${player.history.length},`;
   encoded += player.history
     .map(record => `${FISH_TYPES.indexOf(record.fish)},${record.smallestDate},${record.smallestWeight},${record.biggestDate},${record.biggestWeight}`)
     .join(',');
