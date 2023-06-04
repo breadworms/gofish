@@ -26,12 +26,12 @@ async function main(playerArgs: string): Promise<string> {
   const [cmd, arg] = playerArgs.split(':');
 
   switch (cmd) {
-    case 'saveeverything':
+    case 'backupall':
       if (arg === 'yes') {
         return backup();
       }
 
-      return `This will back up your data in case of a calamity. Use \`saveeverything yes\` to receive a code with instructions on how to use it.`
+      return `This will back up your data in case of a calamity. Use \`backupall yes\` to receive a code with instructions on how to use it.`
 
     case 'deleteeverything':
       if (arg === 'yes') {
@@ -43,7 +43,7 @@ async function main(playerArgs: string): Promise<string> {
       return `This will reset all of your data, including *history, records and collection*. Use \`deleteeverything yes\` if you wish to proceed.`;
 
     default:
-      return `Tools for GO FISH GAME. Commands: \`saveeverything\`, \`deleteeverything\`.`;
+      return `Tools for GO FISH GAME. Commands: \`backupall\`, \`deleteeverything\`.`;
   }
 }
 
