@@ -19,7 +19,7 @@ function printRecord(arg: string): string {
       return `A heavy hook. Allows for fishing in the depths of the ocean. Used automatically.`;
 
     case '🍬':
-      return `A delicious candy. Packed with sugar, eating a piece makes one ready for anything. Release to use.`;
+      return `A rare candy. Packed with sugar, eating a piece makes one ready for anything. Release to use.`;
 
     case '🎰':
       return `A one-armed bandit. You can't resist its allure. It has ${Math.ceil(record.biggestWeight)} spins left.`;
@@ -66,10 +66,6 @@ async function main(playerArgs: string): Promise<string> {
       return render(`Your collection: ${load().inventory.join(' ')}`);
 
     case 'record': {
-      if (arg) {
-        return render(printRecord(arg));
-      }
-
       const player = load();
 
       if (!player.history.length) {

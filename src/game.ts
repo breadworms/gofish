@@ -134,11 +134,15 @@ async function play(): Promise<string> {
 
   let ocean = forecast(player, today);
 
+  // Attempts are initialized as 0 to indicate normal fishing.
+  // One attempt will always be made.
+  let attempts = 0;
+
   let minRange = 1, maxRange = 10;
   let minDepth = 1, maxDepth = 10;
 
-  // Go through player inventory, checking for lures, hooks and
-  // slot machines.
+  // Go through player inventory, checking for lures, hooks, bobbers
+  // and slot machines.
   for (let i = player.inventory.length - 1; i > -1; i--) {
     if (player.inventory[i] === 'disabled🎰') {
       const slot = find(player, '🎰')!;
@@ -151,6 +155,7 @@ async function play(): Promise<string> {
       }
 
       ocean = SLOT_MACHINE(player);
+      attempts = 1;
       minRange = 1;
       minDepth = 1;
       maxRange = ocean.width;
@@ -159,6 +164,13 @@ async function play(): Promise<string> {
       slot.biggestWeight -= 1;
 
       break;
+
+    } else if (player.inventory[i] === '🪀' && attempts = 0) {
+      const bobber = find(player, '🪀')!;
+
+      if (bobber.biggestDate === 1) {
+        attempts = bobber.biggestWeight;
+      }
 
     } else if (player.inventory[i] === '🎏') {
       minRange = 2;
@@ -170,11 +182,21 @@ async function play(): Promise<string> {
     }
   }
 
-  const { fish, weight } = reelIn(
+  let { fish, weight } = reelIn(
     ocean,
     utils.random(minRange, maxRange),
     utils.random(minDepth, maxDepth)
   );
+
+  while (attempts > 1 && fish === false) {
+    ({ fish, weight } = reelIn(
+      ocean,
+      utils.random(minRange, maxRange),
+      utils.random(minDepth, maxDepth)
+    ));
+
+    attempts -= 1;
+  }
 
   if (fish === false) {
     player.canFishDate = now + 30000;
@@ -258,55 +280,71 @@ async function play(): Promise<string> {
 
 function release(player: Player, index: number): string {
   const fish = player.inventory[index];
-  let resp;
 
-  player.inventory.splice(index, 1);
+  switch (fish) {
+    case '🪀': {
+      const bobber = find(player, '🪀')!;
 
-  if (fish === '🍬') {
-    resp = `Delicious! 🫴👄`;
-    player.canFishDate = Date.now();
-
-    const thief = random(forecast(player, new Date()));
-
-    if (thief.fish !== false) {
-      const record = find(player, thief.fish);
-
-      if (record !== undefined) {
-        const weight = Math.round((
-          record.biggestWeight + thief.weight * 0.02
-        ) * 100) / 100 + 1.0;
-
-        resp = `Huh?! ✨ Something jumped out of the water to snatch your delicious candy! ...Got it! 🥍 ${thief.fish} ${weight} lbs!`;
-        add(player, thief.fish, weight);
-      }
+      return ``;
     }
 
-  } else if (fish === '🧜‍♀️' || fish === '🧞‍♂️' || fish === '🦆' || fish === '🐧') {
-    // Temporary, these will have functionality later so don't make
-    // players waste it by releasing.
-    return `Huh? ${fish} won't budge!`;
+    case '🧜‍♀️':
+    case '🧞‍♂️':
+    case '🦆':
+    case '🐧': {
+      // Temporary, these will have functionality later so don't make
+      // players waste it by releasing.
+      return `Huh? ${fish} won't budge!`;
+    }
 
-  } else {
-    resp = `Bye bye ${fish}! 🫳🌊`;
+    case '🍬': {
+      player.inventory.splice(index, 1);
+      player.canFishDate = Date.now();
 
-    const sparkle = random(SLOT_MACHINE(player));
+      let resp = `Delicious! 🫴👄`;
+      const thief = random(forecast(player, new Date()));
 
-    // Constrain weights to artificially lower the odds, making the real
-    // slot machine always much stronger.
-    if (
-      sparkle.fish !== false
-      && sparkle.weight > 1.0
-      && (
-        sparkle.fish !== '🎰'
-        || (sparkle.weight >= 10.0 && sparkle.weight <= 12.5)
-      )
-    ) {
-      add(player, sparkle.fish, sparkle.weight);
-      resp += ` ...Huh? ✨ Something is sparkling in the ocean... 🥍 ${sparkle.fish} Got it!`;
+      if (thief.fish !== false) {
+        const record = find(player, thief.fish);
+
+        if (record !== undefined) {
+          const weight = Math.round((
+            record.biggestWeight + thief.weight * 0.02
+          ) * 100) / 100 + 1.0;
+
+          add(player, thief.fish, weight);
+          resp = `Huh?! ✨ Something jumped out of the water to snatch your rare candy! ...Got it! 🥍 ${thief.fish} ${weight} lbs!`;
+        }
+      }
+
+      save(player);
+
+      return resp;
+    }
+
+    default: {
+      player.inventory.splice(index, 1);
+
+      let resp = `Bye bye ${fish}! 🫳🌊`;
+      const sparkle = random(SLOT_MACHINE(player));
+
+      // Constrain weights to artificially lower the odds, making the real
+      // slot machine always much stronger.
+      if (
+        sparkle.fish !== false
+        && sparkle.weight > 1.0
+        && (
+          sparkle.fish !== '🎰'
+          || (sparkle.weight >= 10.0 && sparkle.weight <= 12.5)
+        )
+      ) {
+        add(player, sparkle.fish, sparkle.weight);
+        resp += ` ...Huh? ✨ Something is sparkling in the ocean... 🥍 ${sparkle.fish} Got it!`;
+      }
+
+      save(player);
+
+      return resp;
     }
   }
-
-  save(player);
-
-  return resp;
 }
