@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig-base",
+  "files": [
+    "./sandbox.d.ts",
+    "./src/gotools.ts",
+    "./src/store.ts"
+  ],
+  "compilerOptions": {
+    "outFile": "./dist/gotools.js"
+  }
+}

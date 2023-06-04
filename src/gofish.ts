@@ -103,16 +103,7 @@ async function main(playerArgs: string): Promise<string> {
         return render(printRecord(arg));
       }
 
-      return `Commands: \`? <fish>\`, \`release <fish>\`, \`record\`, \`collection\`, \`weather\`, \`treasure\`, \`deleteeverything\`.`;
-
-    case 'deleteeverything':
-      if (arg === 'yes') {
-        save(null);
-
-        return `All data was wiped!`;
-      }
-
-      return `This will reset all of your data, including *history, records and collection*. Use \`deleteeverything yes\` if you wish to proceed.`;
+      return `Commands: \`? <fish>\`, \`release <fish>\`, \`record\`, \`collection\`, \`weather\`, \`treasure\`.`;
 
     default:
       return play();
