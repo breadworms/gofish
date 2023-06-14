@@ -3,6 +3,7 @@
   "include": [],
   "references": [
     { "path": "./tsconfig-gofish.json" },
-    { "path": "./tsconfig-gopvp.json" }
+    { "path": "./tsconfig-gopvp.json" },
+    { "path": "./tsconfig-gotools.json" }
   ]
 }

@@ -128,7 +128,7 @@ function printCheckin(date: Date): string {
   return `Check-in starts ${utils.timeDelta(date)}! 🗓️`;
 }
 
-async function main(playerArgs: string): Promise<string> {
+function main(playerArgs: string): string {
   const realm = loadRealm();
 
   if (realm === null) {
