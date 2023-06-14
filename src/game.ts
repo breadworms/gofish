@@ -308,7 +308,7 @@ function release(player: Player, index: number): string {
   const fish = player.inventory[index];
 
   switch (fish) {
-    case 'disabled🪀': {
+    case '🪀': {
       const bobber = find(player, '🪀')!;
 
       bobber.biggestDate = Date.now();
