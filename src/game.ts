@@ -285,6 +285,9 @@ function release(player: Player, index: number): string {
     case '🪀': {
       const bobber = find(player, '🪀')!;
 
+      bobber.biggestDate = Date.now();
+      bobber.biggestWeight = -1;
+
       return ``;
     }
 
