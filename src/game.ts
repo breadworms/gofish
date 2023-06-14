@@ -191,7 +191,7 @@ async function play(): Promise<string> {
 
       break;
 
-    } else if (player.inventory[i] === '🪀' && attempts = 0) {
+    } else if (player.inventory[i] === '🪀' && attempts === 0) {
       const bobber = find(player, '🪀')!;
 
       if (bobber.biggestDate === 1) {
@@ -308,7 +308,7 @@ function release(player: Player, index: number): string {
   const fish = player.inventory[index];
 
   switch (fish) {
-    case '🪀': {
+    case 'disabled🪀': {
       const bobber = find(player, '🪀')!;
 
       bobber.biggestDate = Date.now();
