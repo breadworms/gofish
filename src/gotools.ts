@@ -3,11 +3,11 @@ async function backup(): Promise<string> {
 
   let encoded = `${player.lifetime},${player.lifetimeWeight},${executor},${Date.now()},${player.inventory.length},`;
   encoded += player.inventory
-    .map(fish => FISH_TYPES.indexOf(fish))
+    .map(fish => FISH_IDS.indexOf(fish))
     .join(',');
   encoded += `,${player.history.length},`;
   encoded += player.history
-    .map(record => `${FISH_TYPES.indexOf(record.fish)},${record.smallestDate},${record.smallestWeight},${record.biggestDate},${record.biggestWeight}`)
+    .map(record => `${FISH_IDS.indexOf(record.fish)},${record.smallestDate},${record.smallestWeight},${record.biggestDate},${record.biggestWeight}`)
     .join(',');
   encoded = Buffer.from(encoded).toString('base64');
 
@@ -47,10 +47,11 @@ async function main(playerArgs: string): Promise<string> {
   }
 }
 
-const FISH_TYPES: readonly string[] = [
+const FISH_IDS: readonly string[] = [
   '🌿', '🧦', '🪝', '🐸', '🕷️', '🐍', '🎏', '🐚', '🐠', '🪸', '🐡', '🦀', '🐟',
   '🗡️', '🐬', '🐙', '🐋', '💀', '🪳', '🦐', '🐢', '🦑', '🐌', '🦪', '🐊', '🦕',
   '🐉', '🦞', '🧽', '🦈', '🐳', '🥒', '🧜‍♀️', '👑', '🪱', '🪶', '🩰', '☂️', '🪵',
   '👒', '🦆', '🥪', '🧟', '👟', '🦎', '🦦', '🦠', '🧞‍♂️', '🍄', '🧤', '👢', '🧊',
-  '🦭', '🪨', '🧸', '🧣', '⛸️', '🐧', '🧭', '🐻‍❄️', '🍬', '🎰', '🐸*', '🐚*', '🐟*'
+  '🦭', '🪨', '🧸', '🧣', '⛸️', '🐧', '🧭', '🐻‍❄️', '🍬', '🎰', '🐸*', '🐚*', '🐟*',
+  "🩴", "🩲", "🪼", "🥫", "🧃", "🤿"
 ];

@@ -74,7 +74,7 @@ async function main(playerArgs: string): Promise<string> {
 
       const record = player.history.reduce((a, b) => a.biggestWeight > b.biggestWeight ? a : b);
 
-      return render(`${record.fish} ${record.biggestWeight} lbs! Wow! 📸 Overall, you've caught ${player.lifetime} fish weighing at ${player.lifetimeWeight} lbs. You've seen ${player.history.length}/61 types of fish.`);
+      return render(`${record.fish} ${record.biggestWeight} lbs! Wow! 📸 Overall, you've caught ${player.lifetime} fish weighing at ${player.lifetimeWeight} lbs. You've seen ${player.history.length}/68 types of fish.`);
     }
 
     case 'treasure':
