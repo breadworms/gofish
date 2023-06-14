@@ -1,3 +1,34 @@
+function rng(seed: string): number {
+  // This is just a hash function that does some string nonsense at the
+  // end to get a number that is random enough for the game's purposes.
+  // It is more likely to be closer to 0 than 1.
+
+  let hash = 0x137560f155;
+
+  for (let i = 0; i < seed.length; i++) {
+    hash = Math.imul(hash ^ seed.charCodeAt(i), 2654435761);
+  }
+
+  return parseFloat(`0.${((hash ^ hash >>> 16) >>> 0).toString().slice(2)}`);
+}
+
+function forecast(player: Player, date: Date): Ocean {
+  const month = date.getMonth();
+  const weather = rng(`${date.getFullYear().toString().slice(-1)}${month}${date.getDate()}${TIMEOFDAY[date.getHours()]}`);
+
+  if (weather > 0.99) {
+    return FORECAST[month][4](player);
+  } else if (weather > 0.95) {
+    return FORECAST[month][3](player);
+  } else if (weather > 0.8125) {
+    return FORECAST[month][2](player);
+  } else if (weather > 0.675) {
+    return FORECAST[month][1](player);
+  } else {
+    return FORECAST[month][0](player);
+  }
+}
+
 function reelIn(
   ocean: Ocean,
   x: number,
@@ -18,11 +49,11 @@ function reelIn(
 
   const weight = Math.random() * x * y;
 
-  // A match between the player's ID and the float value of the weight
-  // means a shiny get.
+  // A match between the player's hash and the float value of the
+  // weight means a shiny get.
   if (
     SHINIES[fish] !== undefined
-    && id().substring(1, 5) === weight.toString().substring(4, 8)
+    && rng(executor).toString().substring(2, 6) === weight.toString().substring(4, 8)
   ) {
     fish += '*';
   }
@@ -33,13 +64,8 @@ function reelIn(
   };
 }
 
-function random(ocean: Ocean) {
+function reelInRandom(ocean: Ocean) {
   return reelIn(ocean, utils.random(1, ocean.width), utils.random(1, ocean.height));
-}
-
-function forecast(player: Player, date: Date): Ocean {
-  return (FORECAST[`${date.getMonth() + 1}.${date.getDate()}:${TIMEOFDAY[date.getHours()]}`]
-    ?? CALM_OCEAN)(player);
 }
 
 function add(player: Player, fish: string, weight: number): void {
@@ -239,7 +265,7 @@ async function play(): Promise<string> {
     && player.inventory.includes('👑')
     && player.inventory.includes('🗡️')
   ) {
-    const eaten = random(ocean);
+    const eaten = reelInRandom(ocean);
 
     if (eaten.fish !== false && eaten.weight < weight) {
       add(player, eaten.fish, eaten.weight);
@@ -305,7 +331,7 @@ function release(player: Player, index: number): string {
       player.canFishDate = Date.now();
 
       let resp = `Delicious! 🫴👄`;
-      const thief = random(forecast(player, new Date()));
+      const thief = reelInRandom(forecast(player, new Date()));
 
       if (thief.fish !== false) {
         const record = find(player, thief.fish);
@@ -329,7 +355,7 @@ function release(player: Player, index: number): string {
       player.inventory.splice(index, 1);
 
       let resp = `Bye bye ${fish}! 🫳🌊`;
-      const sparkle = random(SLOT_MACHINE(player));
+      const sparkle = reelInRandom(SLOT_MACHINE(player));
 
       // Constrain weights to artificially lower the odds, making the real
       // slot machine always much stronger.
