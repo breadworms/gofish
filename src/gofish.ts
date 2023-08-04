@@ -18,6 +18,9 @@ function printRecord(arg: string): string {
     case '🪝':
       return `A heavy hook. Allows for fishing in the depths of the ocean. Used automatically.`;
 
+    case '🪀':
+      return `A buoyant bobber. Keeps your line steady in the water until reeled in. ${record.smallestWeight === -1 ? 'Currently in use.' : 'Release to use.'}`;
+
     case '🍬':
       return `A rare candy. Packed with sugar, eating a piece makes one ready for anything. Release to use.`;
 

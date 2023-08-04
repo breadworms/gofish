@@ -1,7 +1,6 @@
 function rng(seed: string): number {
   // This is just a hash function that does some string nonsense at the
   // end to get a number that is random enough for the game's purposes.
-  // It is more likely to be closer to 0 than 1.
 
   let hash = 0x137560f155;
 
@@ -159,11 +158,7 @@ async function play(): Promise<string> {
   }
 
   let ocean = forecast(player, today);
-
-  // Attempts are initialized as 0 to indicate normal fishing.
-  // One attempt will always be made.
-  let attempts = 0;
-
+  let rerolls = 0;
   let minRange = 1, maxRange = 10;
   let minDepth = 1, maxDepth = 10;
 
@@ -181,7 +176,7 @@ async function play(): Promise<string> {
       }
 
       ocean = SLOT_MACHINE(player);
-      attempts = 1;
+      rerolls = 0;
       minRange = 1;
       minDepth = 1;
       maxRange = ocean.width;
@@ -191,13 +186,23 @@ async function play(): Promise<string> {
 
       break;
 
-    } else if (player.inventory[i] === '🪀' && attempts === 0) {
+    } else if (player.inventory[i] === '🪀' && rerolls === 0) {
       const bobber = find(player, '🪀')!;
 
-      if (bobber.biggestDate === 1) {
-        attempts = bobber.biggestWeight;
-      }
+      // A bobber's smallest weight being -1 means it's enabled.
+      if (bobber.smallestWeight === -1) {
+        // You gain a reroll every 5 minutes, up to the maximum of this
+        // specific bobber. The bobber's smallest date is the time at
+        // which it was enabled, while it's biggest weight is the number
+        // of maximum rerolls.
+        rerolls = Math.min((now - bobber.smallestDate) / 1000 / 60 / 5, bobber.biggestWeight);
 
+        // Resetting biggest weight allows the next bobber catch to make
+        // that bobber unique in number of rerolls since it will always
+        // get a bigger weight than 0, setting a new `biggestDate`.
+        bobber.smallestWeight = 0;
+        bobber.biggestWeight = 0;
+      }
     } else if (player.inventory[i] === '🎏') {
       minRange = 2;
       maxRange = ocean.width;
@@ -214,14 +219,14 @@ async function play(): Promise<string> {
     utils.random(minDepth, maxDepth)
   );
 
-  while (attempts > 1 && fish === false) {
+  while (rerolls > 1 && fish === false) {
     ({ fish, weight } = reelIn(
       ocean,
       utils.random(minRange, maxRange),
       utils.random(minDepth, maxDepth)
     ));
 
-    attempts -= 1;
+    rerolls -= 1;
   }
 
   if (fish === false) {
@@ -277,7 +282,8 @@ async function play(): Promise<string> {
   // `min*` being more than 1 means gear was found and should be
   // used.
   resp += (minRange > 1 && use(player, '🎏', weight) ? ' 🎏 broke!💢' : '')
-    + (minDepth > 1 && use(player, '🪝', weight) ? ' 🪝 broke!💢' : '');
+    + (minDepth > 1 && use(player, '🪝', weight) ? ' 🪝 broke!💢' : '')
+    + (rerolls !== 0 && use(player, '🪀', weight) ? ' 🪀 broke!💢' : '');
 
   // Check for personal and channel-wide records.
   const realm = loadRealm();
@@ -291,8 +297,8 @@ async function play(): Promise<string> {
     resp += ` A new record! 🎉`;
   }
 
-  // 8 height is slot machine, skip cooldown.
-  if (ocean.height === 8) {
+  // 5 height is slot machine, skip cooldown.
+  if (ocean.height === 5) {
     player.canFishDate = now + 30000;
   } else {
     player.canFishDate = now + 1800000;
@@ -311,10 +317,15 @@ function release(player: Player, index: number): string {
     case '🪀': {
       const bobber = find(player, '🪀')!;
 
-      bobber.biggestDate = Date.now();
-      bobber.biggestWeight = -1;
+      if (bobber.smallestWeight === -1) {
+        return `Reel your line in first!`;
+      }
 
-      return ``;
+      bobber.smallestWeight = -1;
+      bobber.smallestDate = Date.now();
+      bobber.biggestWeight = 5 + rng(bobber.biggestDate.toString()) * 50;
+
+      return `🪑 And now you wait...`;
     }
 
     case '🧜‍♀️':
@@ -361,10 +372,16 @@ function release(player: Player, index: number): string {
       // slot machine always much stronger.
       if (
         sparkle.fish !== false
-        && sparkle.weight > 1.0
         && (
-          sparkle.fish !== '🎰'
-          || (sparkle.weight >= 10.0 && sparkle.weight <= 12.5)
+          (
+            sparkle.fish !== '🎰'
+            && sparkle.weight > 1.0
+            && sparkle.weight < 3.44
+          )
+          || (
+            sparkle.weight >= 10.0
+            && sparkle.weight <= 12.5
+          )
         )
       ) {
         add(player, sparkle.fish, sparkle.weight);

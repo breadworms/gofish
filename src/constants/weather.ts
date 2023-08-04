@@ -415,22 +415,19 @@ const ALIEN_SHIP: OceanResolver = () => ({
 });
 
 const SLOT_MACHINE: OceanResolver = () => ({
-  width: 5,
-  height: 8,
+  width: 10,
+  height: 5,
   ambiance: `🎰 One more spin...`,
   reports: () => ({
     impending: '',
     continuous: ''
   }),
   map: [
-    '🟦', '🍬', '🪝', '🟦', '🟦',
-    '🟦', '🟦', '🟦', '🟦', '🟦',
-    '🎏', '🟦', '🟦', '🟦', '🟦',
-    '🟦', '🟦', '🟦', '🟦', '🟦',
-    '🟦', '🟦', '🟦', '🟦', '🎰',
-    '🟦', '🟦', '🟦', '🟦', '🟦',
-    '🟦', '🟦', '🟦', '🟦', '🟦',
-    '🟦', '🟦', '🟦', '🟦', '🟦'
+    '🟦', '🍬', '🟦', '🪝', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦',
+    '🟦', '🪀', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦',
+    '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦',
+    '🎏', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦', '🟦',
+    '🟦', '🟦', '🟦', '🟦', '🎰', '🟦', '🟦', '🟦', '🟦', '🟦'
   ]
 });
 
@@ -443,5 +440,7 @@ const TIMEOFDAY: readonly string[] = [
 
 const FORECAST: Readonly<Record<string, [OceanResolver, OceanResolver, OceanResolver, OceanResolver, OceanResolver]>> = {
   '4': [CALM_OCEAN, WINDY_OCEAN, FOGGY_OCEAN, RAINY_OCEAN, RAINY_OCEAN],
-  '5': [CALM_OCEAN, WINDY_OCEAN, SUNLIT_OCEAN, RAINY_OCEAN, RAINY_OCEAN]
+  '5': [CALM_OCEAN, WINDY_OCEAN, SUNLIT_OCEAN, RAINY_OCEAN, RAINY_OCEAN],
+  '6': [CALM_OCEAN, WINDY_OCEAN, SUNLIT_OCEAN, RAINY_OCEAN, RAINY_OCEAN],
+  '7': [CALM_OCEAN, WINDY_OCEAN, SUNLIT_OCEAN, RAINY_OCEAN, RAINY_OCEAN]
 };
