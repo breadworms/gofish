@@ -165,8 +165,18 @@ async function play(): Promise<string> {
   // Go through player inventory, checking for lures, hooks, bobbers
   // and slot machines.
   for (let i = player.inventory.length - 1; i > -1; i--) {
-    if (player.inventory[i] === 'disabled🎰') {
+    if (player.inventory[i] === '🎰') {
       const slot = find(player, '🎰')!;
+
+      // FIXME: Temporarily grandfather players with multiple slot
+      //        machines in by migrating their data here. Remove this
+      //        later.
+      if (slot.biggestDate < 1692569463545) {
+        const numberOfSlots = player.inventory.filter(f => f === '🎰').length;
+
+        slot.biggestWeight = numberOfSlots * 11.25;
+        slot.biggestDate = now;
+      }
 
       // A slot machine's biggest weight are the spins remaining.
       if (slot.biggestWeight <= 0) {
@@ -364,33 +374,47 @@ function release(player: Player, index: number): string {
 
     default: {
       player.inventory.splice(index, 1);
+      save(player);
 
       let resp = `Bye bye ${fish}! 🫳🌊`;
       const sparkle = reelInRandom(SLOT_MACHINE(player));
 
-      // Constrain weights to artificially lower the odds, making the real
-      // slot machine always much stronger.
-      if (
-        sparkle.fish !== false
-        && (
-          (
-            sparkle.fish !== '🎰'
-            && sparkle.weight > 1.0
-            && sparkle.weight < 3.44
-          )
-          || (
-            sparkle.weight >= 10.0
-            && sparkle.weight <= 12.5
-          )
-        )
-      ) {
-        add(player, sparkle.fish, sparkle.weight);
-        resp += ` ...Huh? ✨ Something is sparkling in the ocean... 🥍 ${sparkle.fish} Got it!`;
+      if (sparkle.fish === false) {
+        return resp;
       }
 
-      save(player);
+      // Constrain weights to artificially lower the odds, making the real
+      // slot machine always much stronger.
+      if (sparkle.fish === '🎰') {
+        if (sparkle.weight < 10.0 || sparkle.weight > 12.5) {
+          return resp;
+        }
 
-      return resp;
+        const slot = find(player, '🎰');
+
+        // If the player already has a slot machine, add the newly
+        // caught one's spins to the total number of spins.
+        if (slot !== undefined) {
+          sparkle.weight = slot.biggestWeight + sparkle.weight;
+        }
+
+      } else if (sparkle.weight <= 1.0 || sparkle.weight >= 3.44) {
+        return resp;
+      }
+
+      add(player, sparkle.fish, sparkle.weight);
+
+      // We don't need to call save again here. Calling it once earlier
+      // flags Supibot to "save" custom data after the command finishes
+      // executing, and the player object has been set there by
+      // reference.
+      //
+      // NOTE: In the future it might be a better idea to forgo this
+      //       non-intuitive functionality and have `save` save a copy
+      //       of the player object, requiring it to be called after
+      //       every change.
+
+      return resp + ` ...Huh? ✨ Something is sparkling in the ocean... 🥍 ${sparkle.fish} Got it!`;
     }
   }
 }
