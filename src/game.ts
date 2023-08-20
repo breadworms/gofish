@@ -171,7 +171,7 @@ async function play(): Promise<string> {
       // FIXME: Temporarily grandfather players with multiple slot
       //        machines in by migrating their data here. Remove this
       //        later.
-      if (slot.biggestDate < 1692569463545) {
+      if (slot.biggestDate < 1692572715110) {
         const numberOfSlots = player.inventory.filter(f => f === '🎰').length;
 
         slot.biggestWeight = numberOfSlots * 11.25;
