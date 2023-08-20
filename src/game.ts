@@ -335,6 +335,8 @@ function release(player: Player, index: number): string {
       bobber.smallestDate = Date.now();
       bobber.biggestWeight = 5 + rng(bobber.biggestDate.toString()) * 50;
 
+      save(player);
+
       return `🪑 And now you wait...`;
     }
 
