@@ -395,8 +395,9 @@ function release(player: Player, index: number): string {
         const slot = find(player, '🎰');
 
         // If the player already has a slot machine, add the newly
-        // caught one's spins to the total number of spins.
-        if (slot !== undefined) {
+        // caught one's spins to the total number of spins, unless it's
+        // actually a slot machine being released.
+        if (slot !== undefined && fish !== '🎰') {
           sparkle.weight = slot.biggestWeight + sparkle.weight;
         }
 
